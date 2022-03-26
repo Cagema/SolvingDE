@@ -5,7 +5,7 @@ namespace SolvingDE
 {
     public partial class Form1 : Form
     {
-        delegate Point Van_der_Pol_Method(double x, double y, double derivative, double h);
+        delegate Point Van_der_Pol_Method(double x, double y, double m, double h);
         Van_der_Pol_Method newPointVanderPol = EulerMethods.Van_der_Pol;
         delegate Point Hamiltonian_Method(double x, double y, double h);
         Hamiltonian_Method newPointHamiltonian = EulerMethods.Hamiltonian;
@@ -39,8 +39,7 @@ namespace SolvingDE
 
                         while (time >= 0)
                         {
-                            double derivative = m * (1 - x * x) * y - x;
-                            var point = newPointVanderPol(x, y, derivative, h);
+                            var point = newPointVanderPol(x, y, m, h);
 
                             this.chart1.Series[0].Points.AddXY(point.X, point.Y);
                             x = point.X;
@@ -76,8 +75,7 @@ namespace SolvingDE
 
                         while (time >= 0)
                         {
-                            double derivative = -a * y + Math.Sin(x);
-                            var point = newPointPendulum(x, y, derivative, h);
+                            var point = newPointPendulum(x, y, a, h);
 
                             this.chart1.Series[0].Points.AddXY(point.X, point.Y);
                             x = point.X;
@@ -181,11 +179,19 @@ namespace SolvingDE
         private void RK2MenuItem_Click(object sender, EventArgs e)
         {
             this.Text = "Решение ДУ методом Рунге-Кутты 2 порядка";
+            newPointVanderPol = RungeKutta2Methods.Van_der_Pol;
+            newPointHamiltonian = RungeKutta2Methods.Hamiltonian;
+            newPointPendulum = RungeKutta2Methods.Pendulum;
+            newValuesDoublePendulum = RungeKutta2Methods.DoublePendulum;
         }
 
         private void RK4MenuItem_Click(object sender, EventArgs e)
         {
             this.Text = "Решение ДУ методом Рунге-Кутты 4 порядка";
+            newPointVanderPol = RungeKutta4Methods.Van_der_Pol;
+            newPointHamiltonian = RungeKutta4Methods.Hamiltonian;
+            newPointPendulum = RungeKutta4Methods.Pendulum;
+            newValuesDoublePendulum = RungeKutta4Methods.DoublePendulum;
         }
 
         private void RK8MenuItem_Click(object sender, EventArgs e)
