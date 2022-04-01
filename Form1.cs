@@ -5,13 +5,13 @@ namespace SolvingDE
 {
     public partial class Form1 : Form
     {
-        delegate Point Van_der_Pol_Method(double x, double y, double m, double h);
+        delegate double[] Van_der_Pol_Method(double[] y, double m, double h);
         Van_der_Pol_Method newPointVanderPol = EulerMethods.Van_der_Pol;
-        delegate Point Hamiltonian_Method(double x, double y, double h);
+        delegate double[] Hamiltonian_Method(double[] y, double h);
         Hamiltonian_Method newPointHamiltonian = EulerMethods.Hamiltonian;
-        delegate Point Pendulum_Method(double x, double y, double derivative, double h);
+        delegate double[] Pendulum_Method(double[] y, double derivative, double h);
         Pendulum_Method newPointPendulum = EulerMethods.Pendulum;
-        delegate Point[] DoublePendulum_Method(double l1, double l2, double mass1, double mass2, double p1, double p2, double angle1, double angle2, double c1, double c2, double sqrSin, double h);
+        delegate double[][] DoublePendulum_Method(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h);
         DoublePendulum_Method newValuesDoublePendulum = EulerMethods.DoublePendulum;
 
         public Form1()
@@ -25,8 +25,7 @@ namespace SolvingDE
         {
             double h = Convert.ToDouble(this.hTextBox.Text);
             double time = Convert.ToDouble(this.timeTextBox.Text);
-            double x = Convert.ToDouble(this.xTextBox.Text);
-            double y = Convert.ToDouble(this.yTextBox.Text);
+            double[] y = new double[] { Convert.ToDouble(this.xTextBox.Text), Convert.ToDouble(this.yTextBox.Text) };
 
             this.chart1.Series[0].Points.Clear();
 
@@ -37,15 +36,11 @@ namespace SolvingDE
                         // Van der Pol oscillator
                         double m = Convert.ToDouble(this.mTextBox.Text);
 
-                        while (time >= 0)
+                        for (double t = 0; t < time; t += h)
                         {
-                            var point = newPointVanderPol(x, y, m, h);
+                            y = newPointVanderPol(y, m, h);
 
-                            this.chart1.Series[0].Points.AddXY(point.X, point.Y);
-                            x = point.X;
-                            y = point.Y;
-
-                            time -= h;
+                            this.chart1.Series[0].Points.AddXY(y[0], y[1]);
                         }
 
                         break;
@@ -54,15 +49,11 @@ namespace SolvingDE
                 case 1:
                     {
                         // Hamiltonian system with inseparable Hamiltonian
-                        while (time >= 0)
+                        for (double t = 0; t < time; t += h)
                         {
-                            var point = newPointHamiltonian(x, y, h);
+                            y = newPointHamiltonian(y, h);
 
-                            this.chart1.Series[0].Points.AddXY(point.X, point.Y);
-                            x = point.X;
-                            y = point.Y;
-
-                            time -= h;
+                            this.chart1.Series[0].Points.AddXY(y[0], y[1]);
                         }
 
                         break;
@@ -73,15 +64,11 @@ namespace SolvingDE
                         // Pendulum with indignation
                         double a = Convert.ToDouble(this.aTextBox.Text);
 
-                        while (time >= 0)
+                        for (double t = 0; t < time; t += h)
                         {
-                            var point = newPointPendulum(x, y, a, h);
+                            y = newPointPendulum(y, a, h);
 
-                            this.chart1.Series[0].Points.AddXY(point.X, point.Y);
-                            x = point.X;
-                            y = point.Y;
-
-                            time -= h;
+                            this.chart1.Series[0].Points.AddXY(y[0], y[1]);
                         }
 
                         break;
@@ -92,17 +79,16 @@ namespace SolvingDE
                         // double pendulum
                         double mass1 = Convert.ToDouble(this.massTextBox.Text);
                         mass1 = CheckInputMassAndL(mass1);
-                        double mass2 = mass1;
+                        double[] mass = new double[] {mass1, mass1};
 
                         double l1 = Convert.ToDouble(this.lTextBox.Text);
                         l1 = CheckInputMassAndL(l1);
-                        double l2 = l1;
+                        double[] length = new double[] {l1, l1};
 
-                        double angle1 = Convert.ToDouble(this.angle1TextBox.Text);
-                        double angle2 = Convert.ToDouble(this.angle2TextBox.Text);
+                        double[] angle = new double[] { Convert.ToDouble(this.angle1TextBox.Text), Convert.ToDouble(this.angle2TextBox.Text) };
 
-                        double c1, c2;
-                        double p1 = 0, p2 = 0;
+                        double[] c = new double[2];
+                        double[] p = new double[2];
 
                         this.chart1.Series[0].Points.AddXY(0, 0);
                         this.chart1.Series[0].Points.AddXY(0, 0);
@@ -114,27 +100,23 @@ namespace SolvingDE
                         this.chart1.ChartAreas[0].AxisY.Interval = 5;
                         this.chart1.ChartAreas[0].AxisX.Interval = 5;
 
-                        while (time >= 0)
+                        for (double t = 0; t < time; t += h)
                         {
-                            double sqrSin = Math.Sin(Functions.ConvertToRad(angle1 - angle2)) * Math.Sin(Functions.ConvertToRad(angle1 - angle2));
-                            c1 = p1 * p2 * Math.Sin(Functions.ConvertToRad(angle1 - angle2)) / l1 * l2 * (mass1 + mass2 * sqrSin);
-                            c2 = ((l2 * l2 * mass2 * p1 * p1) + (l1 * l1 * (mass1 + mass2) * p2 * p2) - (l1 * l2 * mass1 * p1 * p2 * Math.Cos(Functions.ConvertToRad(angle1 - angle2)))) / (2 * l1 * l1 * l2 * l2 * (mass1 + mass2 * sqrSin));
+                            double sqrSin = Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1]));
+                            c[0] = p[0] * p[1] * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) / (length[0] * length[1] * (mass[0] + mass[1] * sqrSin));
+                            c[1] = ((length[1] * length[1] * mass[1] * p[0] * p[0]) + (length[0] * length[0] * (mass[0] + mass[1]) * p[1] * p[1]) - (length[0] * length[1] * mass[0] * p[0] * p[1] * Math.Cos(Functions.ConvertToRad(angle[0] - angle[1])))) / (2 * length[0] * length[0] * length[1] * length[1] * (mass[0] + mass[1] * sqrSin));
 
-                            Point[] newValues = newValuesDoublePendulum(l1, l2, mass1, mass2, p1, p2, angle1, angle2, c1, c2, sqrSin, h);
-                            p1 = newValues[0].X;
-                            p2 = newValues[0].Y;
-                            angle1 = newValues[1].X;
-                            angle2 = newValues[1].Y;
+                            double[][] newValues = newValuesDoublePendulum(length, mass, p, angle, c, sqrSin, h);
+                            p = newValues[0];
+                            angle = newValues[1];
 
-                            x = l1 * Math.Cos(Functions.ConvertToRad(angle1 + 90));
-                            y = l1 * -Math.Sin(Functions.ConvertToRad(angle1 + 90));
-                            this.chart1.Series[0].Points[1] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(x, y);
-                            x += l2 * Math.Cos(Functions.ConvertToRad(angle2 + 90));
-                            y += l2 * -Math.Sin(Functions.ConvertToRad(angle2 + 90));
-                            this.chart1.Series[0].Points[2] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(x, y);
+                            y[0] = length[0] * Math.Cos(Functions.ConvertToRad(angle[0] + 90));
+                            y[1] = length[0] * -Math.Sin(Functions.ConvertToRad(angle[0] + 90));
+                            this.chart1.Series[0].Points[1] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
+                            y[0] += length[1] * Math.Cos(Functions.ConvertToRad(angle[1] + 90));
+                            y[1] += length[1] * -Math.Sin(Functions.ConvertToRad(angle[1] + 90));
+                            this.chart1.Series[0].Points[2] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
                             this.chart1.Update();
-
-                            time -= h;
                         }
 
                         this.chart1.ChartAreas[0].AxisX.Maximum = double.NaN;
@@ -197,6 +179,10 @@ namespace SolvingDE
         private void RK8MenuItem_Click(object sender, EventArgs e)
         {
             this.Text = "Решение ДУ методом Рунге-Кутты 8 порядка";
+            newPointVanderPol = RungeKutta8Methods.Van_der_Pol;
+            newPointHamiltonian = RungeKutta8Methods.Hamiltonian;
+            newPointPendulum = RungeKutta8Methods.Pendulum;
+            newValuesDoublePendulum = RungeKutta8Methods.DoublePendulum;
         }
     }
 }

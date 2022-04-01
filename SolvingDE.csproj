@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNumerics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DotNumerics.1.1\lib\DotNumerics.dll</HintPath>
+    </Reference>
     <Reference Include="SciChart.Charting, Version=6.5.1.26063, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
       <HintPath>packages\SciChart.6.5.1.26063\lib\net452\SciChart.Charting.dll</HintPath>
     </Reference>
@@ -70,11 +73,11 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions.cs" />
-    <Compile Include="Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RungeKutta2Methods.cs" />
     <Compile Include="RungeKutta4Methods.cs" />
+    <Compile Include="RungeKutta8Methods.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

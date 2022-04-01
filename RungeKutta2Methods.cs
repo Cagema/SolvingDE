@@ -8,58 +8,65 @@ namespace SolvingDE
 {
     internal class RungeKutta2Methods
     {
-        public static Point Van_der_Pol(double x, double y, double m, double h)
+        public static double[] Van_der_Pol(double[] y, double m, double h)
         {
-            var k1 = Functions.DerivativeVanDerPol(m, x, y);
+            var k1 = Functions.DerivativeVanDerPol(m, y);
 
-            var additionalX = x + h * k1[0];
-            var additionalY = y + h * k1[1];
+            var additionalY =  new double[] { y[0] + h * k1[0], y[1] + h * k1[1] };
 
-            var k2 = Functions.DerivativeVanDerPol(m, additionalX, additionalY);
+            var k2 = Functions.DerivativeVanDerPol(m, additionalY);
 
-            x += h * (k1[0] + k2[0]) / 2;
-            y += h * (k1[1] + k2[1]) / 2;
+            y[0] += h * (k1[0] + k2[0]) / 2;
+            y[1] += h * (k1[1] + k2[1]) / 2;
 
-            return new Point(x, y);
+            return y;
         }
 
-        public static Point Hamiltonian(double x, double y, double h)
+        public static double[] Hamiltonian(double[] y, double h)
         {
-            var k1 = Functions.DerivativeHamiltonianY(x, y);
+            var k1 = Functions.DerivativeHamiltonian(y);
 
-            var additionalY = y + h * k1;
-            x += h * Functions.DerivativeHamiltonianX(x, y);
-            y += h * (k1 + Functions.DerivativeHamiltonianY(x, additionalY)) / 2;
+            var additionalY = new double[] { y[0] + h * k1[0], y[1] + h * k1[1] };
 
-            return new Point(x, y);
+            var k2 = Functions.DerivativeHamiltonian(additionalY);
+
+            y[0] += h * (k1[0] + k2[0]) / 2;
+            y[1] += h * (k1[1] + k2[1]) / 2;
+
+            return y;
         }
 
-        public static Point Pendulum(double x, double y, double a, double h)
+        public static double[] Pendulum(double[] y, double a, double h)
         {
-            var k1 = Functions.DerivativePendulum(a, x, y);
+            var k1 = Functions.DerivativePendulum(a, y);
 
-            var additionalY = y + h * k1;
-            x += h * y;
-            y += h * (k1 + Functions.DerivativePendulum(a, x, additionalY)) / 2;
+            var additionalY = new double[] { y[0] + h * k1[0], y[1] + h * k1[1] };
 
-            return new Point(x, y);
+            var k2 = Functions.DerivativePendulum(a, additionalY);
+
+            y[0] += h * (k1[0] + k2[0]) / 2;
+            y[1] += h * (k1[1] + k2[1]) / 2;
+
+            return y;
         }
 
-        public static Point[] DoublePendulum(double l1, double l2, double mass1, double mass2, double p1, double p2, double angle1, double angle2, double c1, double c2, double sqrSin, double h)
+        public static double[][] DoublePendulum(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h)
         {
-            double currentP1 = p1;
-            double currentP2 = p2;
+            var derivativeP = Functions.DerivativeDPP(mass, length, angle, c);
+            
+            var k1 = Functions.DerivativeDPAngle(mass, length, p, angle, sqrSin);
 
-            p1 += h * Functions.DerivativeDPP1(mass1, mass2, l1, angle1, c1, c2);
-            p2 += h * Functions.DerivativeDPP2(mass2, l2, angle2, c1, c2);
+            var additionalAngle = new double[] { angle[0] + h * k1[0], angle[1] + h * k1[1] };
 
-            var k1 = Functions.DerivativeDPAngle2(mass1, mass2, l1, l2, currentP1, currentP2, angle1, angle2, sqrSin);
+            var k2 = Functions.DerivativeDPAngle(mass, length, p, additionalAngle, sqrSin);
 
-            var additionalAngle2 = angle2 + h * k1;
-            angle1 += h * Functions.DerivativeDPAngle1(mass1, mass2, l1, l2, p1, p2, angle1, angle2, sqrSin);
-            angle2 += h * (k1 +Functions.DerivativeDPAngle2(mass1, mass2, l1, l2, p1, p2, angle1, additionalAngle2, sqrSin))/2;
+            p[0] += h * derivativeP[0];
+            p[1] += h * derivativeP[1];
 
-            return new Point[] { new Point(p1, p2), new Point(angle1, angle2) };
+            angle[0] += h * (k1[0] + k2[0]) / 2;
+            angle[1] += h * (k1[1] + k2[1]) / 2;
+
+            return new double[][] { p, angle };
         }
     }
 }

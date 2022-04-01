@@ -8,42 +8,59 @@ namespace SolvingDE
 {
     public static class EulerMethods
     {
-        public static Point Van_der_Pol(double x, double y, double m, double h)
+        public static double[] Van_der_Pol(double[] y, double m, double h)
         {
-            var derivative = Functions.DerivativeVanDerPol(m, x, y);
-            x += h * derivative[0];
-            y += h * derivative[1];
-            return new Point(x, y);
+            CheckInputParameter(y);
+
+            var derivative = Functions.DerivativeVanDerPol(m, y);
+            y[0] += h * derivative[0];
+            y[1] += h * derivative[1];
+            return y;
         }
 
-        public static Point Hamiltonian(double x, double y, double h)
+        public static double[] Hamiltonian(double[] y, double h)
         {
-            var currentX = x;
-            x += h * (-x * x * y - y);
-            y += h * (currentX * y * y + currentX);
-            return new Point(x, y);
+            CheckInputParameter(y);
+
+            var derivative = Functions.DerivativeHamiltonian(y);
+            y[0] += h * derivative[0];
+            y[1] += h * derivative[1];
+            return y;
         }
 
-        public static Point Pendulum(double x, double y, double a, double h)
+        public static double[] Pendulum(double[] y, double a, double h)
         {
-            var currentX = x;
-            x += h * y;
-            y += h * Functions.DerivativePendulum(a, currentX, y);
-            return new Point(x, y);
+            CheckInputParameter(y);
+
+            var derivative = Functions.DerivativePendulum(a, y);
+            y[0] += h * derivative[0];
+            y[1] += h * derivative[1];
+            return y;
         }
 
-        public static Point[] DoublePendulum(double l1, double l2, double mass1, double mass2, double p1, double p2, double angle1, double angle2, double c1, double c2, double sqrSin, double h)
+        public static double[][] DoublePendulum(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h)
         {
-            double currentP1 = p1;
-            double currentP2 = p2;
-            p1 += h * Functions.DerivativeDPP1(mass1, mass2, l1, angle1, c1, c2);
-            p2 += h * Functions.DerivativeDPP2(mass2, l2, angle2, c1, c2);
+            CheckInputParameter(p);
+            CheckInputParameter(angle);
 
-            double currentAngle1 = angle1;
-            angle1 += h * Functions.DerivativeDPAngle1(mass1, mass2, l1, l2, p1, p2, angle1, angle2, sqrSin);
-            angle2 += h * Functions.DerivativeDPAngle2(mass1, mass2, l1, l2, currentP1, currentP2, currentAngle1, angle2, sqrSin);
+            var derivativeP = Functions.DerivativeDPP(mass, length, angle, c);
+            var derivativeAngle = Functions.DerivativeDPAngle(mass, length, p, angle, sqrSin);
 
-            return new Point[] { new Point(p1, p2), new Point(angle1, angle2) };
+            angle[0] += h * derivativeAngle[0];
+            angle[1] += h * derivativeAngle[1];
+
+            p[0] += h * derivativeP[0];
+            p[1] += h * derivativeP[1];
+
+            return new double[][] { p, angle };
+        }
+
+        private static void CheckInputParameter(double[] y)
+        {
+            if (y.Length > 2)
+            {
+                throw new ArgumentException("More than 2 elements massive");
+            }
         }
     }
 }

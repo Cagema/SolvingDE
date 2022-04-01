@@ -9,65 +9,56 @@ namespace SolvingDE
             return angle * Math.PI / 180;
         }
 
-        public static double[] DerivativeVanDerPol(double m, double x, double y)
+        public static double[] ODEs(double t, double[] y)
         {
+            double m = 0;
             double[] result = new double[2];
-            result[0] = y;
-            result[1] = m * (1 - x * x) * y - x;
+            result[0] = y[1];
+            result[1] = m * (1 - y[0] * y[0]) * y[1] - y[0];
             return result;
         }
 
-        public static double DerivativeHamiltonianX(double x, double y)
+        public static double[] DerivativeVanDerPol(double m, double[] y)
         {
-            return -x * x * y - y;
+            double[] result = new double[2];
+            result[0] = y[1];
+            result[1] = m * (1 - y[0] * y[0]) * y[1] - y[0];
+            return result;
         }
 
-        public static double DerivativeHamiltonianY(double x, double y)
+        public static double[] DerivativeHamiltonian(double[] y)
         {
-            return x * y * y + x;
+            double[] result = new double[2];
+            result[0] = -y[0] * y[0] * y[1] - y[1];
+            result[1] = y[0] * y[1] * y[1] + y[0];
+            return result;
         }
 
-        public static double DerivativePendulum(double a, double x, double y)
+        public static double[] DerivativePendulum(double a, double[] y)
         {
-            return -a * y + Math.Sin(ConvertToRad(x));
+            double[] result = new double[2];
+            result[0] = y[1];
+            result[1] = -a * y[1] + Math.Sin(ConvertToRad(y[0]));
+            return result;
         }
 
-        public static double DerivativeDPP2(double mass2, double l2, double angle2, double c1, double c2)
+        public static double[] DerivativeDPP(double[] mass, double[] length, double[] angle, double[] c)
         {
+            double[] result = new double[2];
             double g = 9.81d;
-            return -mass2 * g * l2 * Math.Sin(ConvertToRad(angle2)) + c1 - c2;
+
+            result[0] = -(mass[0] + mass[1]) * g * length[0] * Math.Sin(ConvertToRad(angle[0])) - c[0] + c[1];
+            result[1] = -mass[1] * g * length[1] * Math.Sin(ConvertToRad(angle[1])) + c[0] - c[1];
+
+            return result;
         }
 
-        public static double DerivativeDPP1(double mass1, double mass2, double l1, double angle1, double c1, double c2)
+        public static double[] DerivativeDPAngle(double[] mass, double[] length, double[] p, double[] angle, double sqrSin)
         {
-            double g = 9.81d;
-            return -(mass1 + mass2) * g * l1 * Math.Sin(ConvertToRad(angle1)) - c1 + c2;
-        }
-
-        public static double DerivativeDPAngle1(double mass1,
-                                                double mass2,
-                                                double l1,
-                                                double l2,
-                                                double p1,
-                                                double p2,
-                                                double angle1,
-                                                double angle2,
-                                                double sqrSin)
-        {
-            return ((l2 * p1) - (l1 * p2 * Math.Cos(ConvertToRad(angle1 - angle2)))) / l1 * l1 * l2 * (mass1 + mass2 * sqrSin);
-        }
-
-        public static double DerivativeDPAngle2(double mass1,
-                                                double mass2,
-                                                double l1,
-                                                double l2,
-                                                double p1,
-                                                double p2,
-                                                double angle1,
-                                                double angle2,
-                                                double sqrSin)
-        {
-            return ((l1 * p2 * (mass1 + mass2)) - (l2 * mass2 * p1 * Math.Cos(ConvertToRad(angle1 - angle2)))) / l2 * l2 * l1 * mass2 * (mass1 + mass2 * sqrSin);
+            var result = new double[2];
+            result[0] = ((length[1] * p[0]) - (length[0] * p[1] * Math.Cos(ConvertToRad(angle[0] - angle[1])))) / length[0] * length[0] * length[1] * (mass[0] + mass[1] * sqrSin);
+            result[1] = ((length[0] * p[1] * (mass[0] + mass[1])) - (length[1] * mass[1] * p[0] * Math.Cos(ConvertToRad(angle[0] - angle[1])))) / length[1] * length[1] * length[0] * mass[1] * (mass[0] + mass[1] * sqrSin);
+            return result;
         }
     }
 }

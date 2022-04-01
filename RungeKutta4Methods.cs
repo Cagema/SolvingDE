@@ -8,56 +8,97 @@ namespace SolvingDE
 {
     internal class RungeKutta4Methods
     {
-        public static Point Van_der_Pol(double x, double y, double m, double h)
+        public static double[] Van_der_Pol(double[] y, double m, double h)
         {
-            var k1 = Functions.DerivativeVanDerPol(m, x, y);
-            var k2 = Functions.DerivativeVanDerPol(m, x + (h / 2) * k1[0], y + (h / 2) * k1[1]);
-            var k3 = Functions.DerivativeVanDerPol(m, x + (h / 2) * k2[0], y + (h / 2) * k2[1]);
-            var k4 = Functions.DerivativeVanDerPol(m, x + h * k3[0], y + h * k3[1]);
+            double[] additionalY = new double[2];
+            Array.Copy(y, additionalY, 2);
+            double[][] k = new double[4][];
+            double[] hRK4 = new double[] { 1, h / 2, h / 2, h };
 
-            x += (h / 6) * (k1[0] + (2 * k2[0]) + (2 * k3[0]) + k4[0]);
-            y += (h / 6) * (k1[1] + (2 * k2[1]) + (2 * k3[1]) + k4[1]);
+            k[0] = Functions.DerivativeVanDerPol(m, y);
+            for (int i = 1; i < 4; i++)
+            {
+                k[i] = new double[2];
+                additionalY[0] = y[0] + hRK4[i] * k[i - 1][0];
+                additionalY[1] = y[1] + hRK4[i] * k[i - 1][1];
+                k[i] = Functions.DerivativeVanDerPol(m, additionalY);
+            }
 
-            return new Point(x, y);
+            y[0] += (h / 6) * (k[0][0] + (2 * k[1][0]) + (2 * k[2][0]) + k[3][0]);
+            y[1] += (h / 6) * (k[0][1] + (2 * k[1][1]) + (2 * k[2][1]) + k[3][1]);
+
+            return y;
         }
 
-        public static Point Hamiltonian(double x, double y, double h)
+        public static double[] Hamiltonian(double[] y, double h)
         {
-            var k1 = Functions.DerivativeHamiltonianY(x, y);
+            double[] additionalY = new double[2];
+            Array.Copy(y, additionalY, 2);
+            double[][] k = new double[4][];
+            double[] hRK4 = new double[] { 1, h / 2, h / 2, h };
 
-            var additionalY = y + h * k1;
-            x += h * Functions.DerivativeHamiltonianX(x, y);
-            y += h * (k1 + Functions.DerivativeHamiltonianY(x, additionalY)) / 2;
+            k[0] = Functions.DerivativeHamiltonian(additionalY);
+            for (int i = 1; i < 4; i++)
+            {
+                k[i] = new double[2];
+                additionalY[0] = y[0] + hRK4[i] * k[i - 1][0];
+                additionalY[1] = y[1] + hRK4[i] * k[i - 1][1];
+                k[i] = Functions.DerivativeHamiltonian(additionalY);
+            }
 
-            return new Point(x, y);
+            y[0] += (h / 6) * (k[0][0] + (2 * k[1][0]) + (2 * k[2][0]) + k[3][0]);
+            y[1] += (h / 6) * (k[0][1] + (2 * k[1][1]) + (2 * k[2][1]) + k[3][1]);
+
+            return y;
         }
 
-        public static Point Pendulum(double x, double y, double a, double h)
+        public static double[] Pendulum(double[] y, double a, double h)
         {
-            var k1 = Functions.DerivativePendulum(a, x, y);
+            double[] additionalY = new double[2];
+            Array.Copy(y, additionalY, 2);
+            double[][] k = new double[4][];
+            double[] hRK4 = new double[] { 1, h / 2, h / 2, h };
 
-            var additionalY = y + h * k1;
-            x += h * y;
-            y += h * (k1 + Functions.DerivativePendulum(a, x, additionalY)) / 2;
+            k[0] = Functions.DerivativePendulum(a, additionalY);
+            for (int i = 1; i < 4; i++)
+            {
+                k[i] = new double[2];
+                additionalY[0] = y[0] + hRK4[i] * k[i - 1][0];
+                additionalY[1] = y[1] + hRK4[i] * k[i - 1][1];
+                k[i] = Functions.DerivativePendulum(a, additionalY);
+            }
 
-            return new Point(x, y);
+            y[0] += (h / 6) * (k[0][0] + (2 * k[1][0]) + (2 * k[2][0]) + k[3][0]);
+            y[1] += (h / 6) * (k[0][1] + (2 * k[1][1]) + (2 * k[2][1]) + k[3][1]);
+
+            return y;
         }
 
-        public static Point[] DoublePendulum(double l1, double l2, double mass1, double mass2, double p1, double p2, double angle1, double angle2, double c1, double c2, double sqrSin, double h)
+        public static double[][] DoublePendulum(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h)
         {
-            double currentP1 = p1;
-            double currentP2 = p2;
+            var derivativeP = Functions.DerivativeDPP(mass, length, angle, c);
 
-            p1 += h * Functions.DerivativeDPP1(mass1, mass2, l1, angle1, c1, c2);
-            p2 += h * Functions.DerivativeDPP2(mass2, l2, angle2, c1, c2);
+            double[] additionalAngle = new double[2];
+            Array.Copy(angle, additionalAngle, 2);
+            double[][] k = new double[4][];
+            double[] hRK4 = new double[] { 1, h / 2, h / 2, h };
 
-            var k1 = Functions.DerivativeDPAngle2(mass1, mass2, l1, l2, currentP1, currentP2, angle1, angle2, sqrSin);
+            k[0] = Functions.DerivativeDPAngle(mass, length, p, additionalAngle, sqrSin);
+            for (int i = 1; i < 4; i++)
+            {
+                k[i] = new double[2];
+                additionalAngle[0] += hRK4[i] * k[i][0];
+                additionalAngle[1] += hRK4[i] * k[i][1];
+                k[i] = Functions.DerivativeDPAngle(mass, length, p, additionalAngle, sqrSin);
+            }
 
-            var additionalAngle2 = angle2 + h * k1;
-            angle1 += h * Functions.DerivativeDPAngle1(mass1, mass2, l1, l2, p1, p2, angle1, angle2, sqrSin);
-            angle2 += h * (k1 + Functions.DerivativeDPAngle2(mass1, mass2, l1, l2, p1, p2, angle1, additionalAngle2, sqrSin)) / 2;
+            p[0] += h * derivativeP[0];
+            p[1] += h * derivativeP[1];
 
-            return new Point[] { new Point(p1, p2), new Point(angle1, angle2) };
+            angle[0] += (h / 6) * (k[0][0] + (2 * k[1][0]) + (2 * k[2][0]) + k[3][0]);
+            angle[1] += (h / 6) * (k[0][1] + (2 * k[1][1]) + (2 * k[2][1]) + k[3][1]);
+
+            return new double[][] { p, angle };
         }
     }
 }
