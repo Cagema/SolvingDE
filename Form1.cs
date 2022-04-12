@@ -184,5 +184,20 @@ namespace SolvingDE
             newPointPendulum = RungeKutta8Methods.Pendulum;
             newValuesDoublePendulum = RungeKutta8Methods.DoublePendulum;
         }
+
+        private void ImplicitMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Text = "Решение ДУ неявным методом";
+        }
+
+        private void ExtraMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Text = "Решение ДУ методом экстраполятора";
+        }
+
+        private void CompMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Text = "Решение ДУ композиционным методом";
+        }
     }
 }

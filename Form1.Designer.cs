@@ -61,6 +61,9 @@ namespace SolvingDE
             this.RK2MenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RK4MenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RK8MenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExtraMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CompMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ImplicitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -293,7 +296,10 @@ namespace SolvingDE
             this.EulerMenuItem,
             this.RK2MenuItem,
             this.RK4MenuItem,
-            this.RK8MenuItem});
+            this.RK8MenuItem,
+            this.ExtraMenuItem,
+            this.CompMenuItem,
+            this.ImplicitMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1046, 24);
@@ -328,6 +334,27 @@ namespace SolvingDE
             this.RK8MenuItem.Text = "РК8";
             this.RK8MenuItem.Click += new System.EventHandler(this.RK8MenuItem_Click);
             // 
+            // ExtraMenuItem
+            // 
+            this.ExtraMenuItem.Name = "ExtraMenuItem";
+            this.ExtraMenuItem.Size = new System.Drawing.Size(97, 20);
+            this.ExtraMenuItem.Text = "Экстраполятор";
+            this.ExtraMenuItem.Click += new System.EventHandler(this.ExtraMenuItem_Click);
+            // 
+            // CompMenuItem
+            // 
+            this.CompMenuItem.Name = "CompMenuItem";
+            this.CompMenuItem.Size = new System.Drawing.Size(105, 20);
+            this.CompMenuItem.Text = "Композиционный";
+            this.CompMenuItem.Click += new System.EventHandler(this.CompMenuItem_Click);
+            // 
+            // ImplicitMenuItem
+            // 
+            this.ImplicitMenuItem.Name = "ImplicitMenuItem";
+            this.ImplicitMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.ImplicitMenuItem.Text = "Неявный";
+            this.ImplicitMenuItem.Click += new System.EventHandler(this.ImplicitMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -361,7 +388,7 @@ namespace SolvingDE
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Решение ДУ методом Эйлера";
+            this.Text = "Решение некоторых ДУ";
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -400,6 +427,9 @@ namespace SolvingDE
         private System.Windows.Forms.ToolStripMenuItem RK2MenuItem;
         private System.Windows.Forms.ToolStripMenuItem RK4MenuItem;
         private System.Windows.Forms.ToolStripMenuItem RK8MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ExtraMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CompMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ImplicitMenuItem;
     }
 }
 
