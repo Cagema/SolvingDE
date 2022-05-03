@@ -9,15 +9,6 @@ namespace SolvingDE
             return angle * Math.PI / 180;
         }
 
-        public static double[] ODEs(double t, double[] y)
-        {
-            double m = 0;
-            double[] result = new double[2];
-            result[0] = y[1];
-            result[1] = m * (1 - y[0] * y[0]) * y[1] - y[0];
-            return result;
-        }
-
         public static double[] DerivativeVanDerPol(double m, double[] y)
         {
             double[] result = new double[2];
