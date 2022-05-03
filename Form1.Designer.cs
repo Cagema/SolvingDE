@@ -30,102 +30,72 @@ namespace SolvingDE
         private void InitializeComponent()
         {
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.mTextBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.mLabel = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.hTextBox = new System.Windows.Forms.TextBox();
             this.timeTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.aLabel = new System.Windows.Forms.Label();
             this.aTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.xTextBox = new System.Windows.Forms.TextBox();
             this.yTextBox = new System.Windows.Forms.TextBox();
             this.lTextBox = new System.Windows.Forms.TextBox();
             this.massTextBox = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.lengthLabel = new System.Windows.Forms.Label();
+            this.massLabel = new System.Windows.Forms.Label();
             this.angle1TextBox = new System.Windows.Forms.TextBox();
             this.angle2TextBox = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
+            this.angle1Label = new System.Windows.Forms.Label();
+            this.angle2Label = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.EulerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RK2MenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RK4MenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RK8MenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ExtraMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.CompMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ImplicitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ODU1MenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ODU2MenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ODU3MenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ODU4MenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MethodsListBox = new System.Windows.Forms.CheckedListBox();
+            this.timeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.DecTextBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.timeChart)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
             // 
             chartArea1.AxisX.IsLabelAutoFit = false;
-            chartArea1.AxisX.LabelStyle.Format = "0.00";
+            chartArea1.AxisX.LabelStyle.Format = "0.0";
             chartArea1.AxisY.IsLabelAutoFit = false;
-            chartArea1.AxisY.LabelStyle.Format = "0.00";
+            chartArea1.AxisY.LabelStyle.Format = "0.0";
             chartArea1.Name = "ChartArea1";
             this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Location = new System.Drawing.Point(12, 27);
             this.chart1.Name = "chart1";
-            series1.BorderWidth = 2;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.CustomProperties = "IsXAxisQuantitative=False";
-            series1.Name = "Series0";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Name = "Series2";
-            this.chart1.Series.Add(series1);
-            this.chart1.Series.Add(series2);
-            this.chart1.Size = new System.Drawing.Size(665, 394);
+            this.chart1.Size = new System.Drawing.Size(244, 244);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
-            title1.BorderColor = System.Drawing.Color.Black;
-            title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            title1.Name = "Title1";
-            title1.Text = "Фазовый портрет";
-            this.chart1.Titles.Add(title1);
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Осциллятор Ван дер Поля",
-            "Гамильтонова система с неразделяемым гамильтонианом",
-            "Маятник с возмущением",
-            "Двойной маятник"});
-            this.comboBox1.Location = new System.Drawing.Point(683, 27);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(332, 32);
-            this.comboBox1.TabIndex = 1;
             // 
             // mTextBox
             // 
-            this.mTextBox.Location = new System.Drawing.Point(683, 427);
+            this.mTextBox.Location = new System.Drawing.Point(675, 141);
             this.mTextBox.Name = "mTextBox";
             this.mTextBox.Size = new System.Drawing.Size(100, 29);
             this.mTextBox.TabIndex = 2;
             this.mTextBox.Text = "0";
             // 
-            // label1
+            // mLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(789, 430);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(157, 24);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Коэффициент m";
+            this.mLabel.AutoSize = true;
+            this.mLabel.Location = new System.Drawing.Point(781, 144);
+            this.mLabel.Name = "mLabel";
+            this.mLabel.Size = new System.Drawing.Size(157, 24);
+            this.mLabel.TabIndex = 3;
+            this.mLabel.Text = "Коэффициент m";
             // 
             // button1
             // 
@@ -139,7 +109,7 @@ namespace SolvingDE
             // 
             // hTextBox
             // 
-            this.hTextBox.Location = new System.Drawing.Point(684, 66);
+            this.hTextBox.Location = new System.Drawing.Point(676, 31);
             this.hTextBox.Name = "hTextBox";
             this.hTextBox.Size = new System.Drawing.Size(100, 29);
             this.hTextBox.TabIndex = 5;
@@ -147,7 +117,7 @@ namespace SolvingDE
             // 
             // timeTextBox
             // 
-            this.timeTextBox.Location = new System.Drawing.Point(684, 102);
+            this.timeTextBox.Location = new System.Drawing.Point(676, 67);
             this.timeTextBox.Name = "timeTextBox";
             this.timeTextBox.Size = new System.Drawing.Size(100, 29);
             this.timeTextBox.TabIndex = 6;
@@ -156,7 +126,7 @@ namespace SolvingDE
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(790, 69);
+            this.label2.Location = new System.Drawing.Point(782, 34);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(43, 24);
             this.label2.TabIndex = 7;
@@ -165,233 +135,273 @@ namespace SolvingDE
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(789, 105);
+            this.label3.Location = new System.Drawing.Point(781, 70);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 24);
             this.label3.TabIndex = 8;
             this.label3.Text = "Время";
             // 
-            // label4
+            // aLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(790, 395);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(151, 24);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Коэффициент a";
+            this.aLabel.AutoSize = true;
+            this.aLabel.Location = new System.Drawing.Point(782, 144);
+            this.aLabel.Name = "aLabel";
+            this.aLabel.Size = new System.Drawing.Size(151, 24);
+            this.aLabel.TabIndex = 9;
+            this.aLabel.Text = "Коэффициент a";
+            this.aLabel.Visible = false;
             // 
             // aTextBox
             // 
-            this.aTextBox.Location = new System.Drawing.Point(683, 392);
+            this.aTextBox.Location = new System.Drawing.Point(675, 141);
             this.aTextBox.Name = "aTextBox";
             this.aTextBox.Size = new System.Drawing.Size(100, 29);
             this.aTextBox.TabIndex = 10;
             this.aTextBox.Text = "0";
+            this.aTextBox.Visible = false;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(789, 141);
+            this.label5.Location = new System.Drawing.Point(781, 106);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(24, 24);
+            this.label5.Size = new System.Drawing.Size(186, 24);
             this.label5.TabIndex = 11;
-            this.label5.Text = "X";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(790, 176);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(22, 24);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "Y";
+            this.label5.Text = "Начальные условия";
             // 
             // xTextBox
             // 
-            this.xTextBox.Location = new System.Drawing.Point(684, 138);
+            this.xTextBox.Location = new System.Drawing.Point(676, 103);
             this.xTextBox.Name = "xTextBox";
-            this.xTextBox.Size = new System.Drawing.Size(100, 29);
+            this.xTextBox.Size = new System.Drawing.Size(40, 29);
             this.xTextBox.TabIndex = 13;
-            this.xTextBox.Text = "0";
+            this.xTextBox.Text = "1";
             // 
             // yTextBox
             // 
-            this.yTextBox.Location = new System.Drawing.Point(684, 173);
+            this.yTextBox.Location = new System.Drawing.Point(735, 103);
             this.yTextBox.Name = "yTextBox";
-            this.yTextBox.Size = new System.Drawing.Size(100, 29);
+            this.yTextBox.Size = new System.Drawing.Size(40, 29);
             this.yTextBox.TabIndex = 14;
-            this.yTextBox.Text = "1";
+            this.yTextBox.Text = "0";
             // 
             // lTextBox
             // 
-            this.lTextBox.Location = new System.Drawing.Point(684, 208);
+            this.lTextBox.Location = new System.Drawing.Point(675, 141);
             this.lTextBox.Name = "lTextBox";
             this.lTextBox.Size = new System.Drawing.Size(100, 29);
             this.lTextBox.TabIndex = 15;
             this.lTextBox.Text = "10";
+            this.lTextBox.Visible = false;
             // 
             // massTextBox
             // 
-            this.massTextBox.Location = new System.Drawing.Point(684, 243);
+            this.massTextBox.Location = new System.Drawing.Point(675, 176);
             this.massTextBox.Name = "massTextBox";
             this.massTextBox.Size = new System.Drawing.Size(100, 29);
             this.massTextBox.TabIndex = 16;
             this.massTextBox.Text = "1";
+            this.massTextBox.Visible = false;
             // 
-            // label7
+            // lengthLabel
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(790, 211);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(160, 24);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "Длина стержней";
+            this.lengthLabel.AutoSize = true;
+            this.lengthLabel.Location = new System.Drawing.Point(781, 144);
+            this.lengthLabel.Name = "lengthLabel";
+            this.lengthLabel.Size = new System.Drawing.Size(160, 24);
+            this.lengthLabel.TabIndex = 17;
+            this.lengthLabel.Text = "Длина стержней";
+            this.lengthLabel.Visible = false;
             // 
-            // label8
+            // massLabel
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(790, 246);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(160, 24);
-            this.label8.TabIndex = 18;
-            this.label8.Text = "Масса стержней";
+            this.massLabel.AutoSize = true;
+            this.massLabel.Location = new System.Drawing.Point(781, 179);
+            this.massLabel.Name = "massLabel";
+            this.massLabel.Size = new System.Drawing.Size(160, 24);
+            this.massLabel.TabIndex = 18;
+            this.massLabel.Text = "Масса стержней";
+            this.massLabel.Visible = false;
             // 
             // angle1TextBox
             // 
-            this.angle1TextBox.Location = new System.Drawing.Point(684, 278);
+            this.angle1TextBox.Location = new System.Drawing.Point(675, 211);
             this.angle1TextBox.Name = "angle1TextBox";
             this.angle1TextBox.Size = new System.Drawing.Size(100, 29);
             this.angle1TextBox.TabIndex = 19;
             this.angle1TextBox.Text = "37";
+            this.angle1TextBox.Visible = false;
             // 
             // angle2TextBox
             // 
-            this.angle2TextBox.Location = new System.Drawing.Point(684, 313);
+            this.angle2TextBox.Location = new System.Drawing.Point(675, 246);
             this.angle2TextBox.Name = "angle2TextBox";
             this.angle2TextBox.Size = new System.Drawing.Size(100, 29);
             this.angle2TextBox.TabIndex = 20;
             this.angle2TextBox.Text = "72";
+            this.angle2TextBox.Visible = false;
             // 
-            // label9
+            // angle1Label
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(790, 281);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(250, 24);
-            this.label9.TabIndex = 21;
-            this.label9.Text = "Начальный угол стержня 1";
+            this.angle1Label.AutoSize = true;
+            this.angle1Label.Location = new System.Drawing.Point(781, 214);
+            this.angle1Label.Name = "angle1Label";
+            this.angle1Label.Size = new System.Drawing.Size(250, 24);
+            this.angle1Label.TabIndex = 21;
+            this.angle1Label.Text = "Начальный угол стержня 1";
+            this.angle1Label.Visible = false;
             // 
-            // label10
+            // angle2Label
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(790, 316);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(260, 24);
-            this.label10.TabIndex = 22;
-            this.label10.Text = "Начальный угол стержняя 2";
+            this.angle2Label.AutoSize = true;
+            this.angle2Label.Location = new System.Drawing.Point(781, 249);
+            this.angle2Label.Name = "angle2Label";
+            this.angle2Label.Size = new System.Drawing.Size(260, 24);
+            this.angle2Label.TabIndex = 22;
+            this.angle2Label.Text = "Начальный угол стержняя 2";
+            this.angle2Label.Visible = false;
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EulerMenuItem,
-            this.RK2MenuItem,
-            this.RK4MenuItem,
-            this.RK8MenuItem,
-            this.ExtraMenuItem,
-            this.CompMenuItem,
-            this.ImplicitMenuItem});
+            this.ODU1MenuItem,
+            this.ODU2MenuItem,
+            this.ODU3MenuItem,
+            this.ODU4MenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1046, 24);
             this.menuStrip1.TabIndex = 23;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // EulerMenuItem
+            // ODU1MenuItem
             // 
-            this.EulerMenuItem.Name = "EulerMenuItem";
-            this.EulerMenuItem.Size = new System.Drawing.Size(50, 20);
-            this.EulerMenuItem.Text = "Эйлер";
-            this.EulerMenuItem.Click += new System.EventHandler(this.EulerMenuItem_Click);
+            this.ODU1MenuItem.Name = "ODU1MenuItem";
+            this.ODU1MenuItem.Size = new System.Drawing.Size(93, 20);
+            this.ODU1MenuItem.Text = "Ван дер Поля";
+            this.ODU1MenuItem.Click += new System.EventHandler(this.ODU1MenuItem_Click);
             // 
-            // RK2MenuItem
+            // ODU2MenuItem
             // 
-            this.RK2MenuItem.Name = "RK2MenuItem";
-            this.RK2MenuItem.Size = new System.Drawing.Size(38, 20);
-            this.RK2MenuItem.Text = "РК2";
-            this.RK2MenuItem.Click += new System.EventHandler(this.RK2MenuItem_Click);
+            this.ODU2MenuItem.Name = "ODU2MenuItem";
+            this.ODU2MenuItem.Size = new System.Drawing.Size(146, 20);
+            this.ODU2MenuItem.Text = "Гамильтонова система";
+            this.ODU2MenuItem.Click += new System.EventHandler(this.ODU2MenuItem_Click);
             // 
-            // RK4MenuItem
+            // ODU3MenuItem
             // 
-            this.RK4MenuItem.Name = "RK4MenuItem";
-            this.RK4MenuItem.Size = new System.Drawing.Size(38, 20);
-            this.RK4MenuItem.Text = "РК4";
-            this.RK4MenuItem.Click += new System.EventHandler(this.RK4MenuItem_Click);
+            this.ODU3MenuItem.Name = "ODU3MenuItem";
+            this.ODU3MenuItem.Size = new System.Drawing.Size(158, 20);
+            this.ODU3MenuItem.Text = "Маятник с возмущением";
+            this.ODU3MenuItem.Click += new System.EventHandler(this.ODU3MenuItem_Click);
             // 
-            // RK8MenuItem
+            // ODU4MenuItem
             // 
-            this.RK8MenuItem.Name = "RK8MenuItem";
-            this.RK8MenuItem.Size = new System.Drawing.Size(38, 20);
-            this.RK8MenuItem.Text = "РК8";
-            this.RK8MenuItem.Click += new System.EventHandler(this.RK8MenuItem_Click);
+            this.ODU4MenuItem.Name = "ODU4MenuItem";
+            this.ODU4MenuItem.Size = new System.Drawing.Size(117, 20);
+            this.ODU4MenuItem.Text = "Двойной маятник";
+            this.ODU4MenuItem.Click += new System.EventHandler(this.ODU4MenuItem_Click);
             // 
-            // ExtraMenuItem
+            // MethodsListBox
             // 
-            this.ExtraMenuItem.Name = "ExtraMenuItem";
-            this.ExtraMenuItem.Size = new System.Drawing.Size(97, 20);
-            this.ExtraMenuItem.Text = "Экстраполятор";
-            this.ExtraMenuItem.Click += new System.EventHandler(this.ExtraMenuItem_Click);
+            this.MethodsListBox.FormattingEnabled = true;
+            this.MethodsListBox.Items.AddRange(new object[] {
+            "Рунге-Кутты явный 2 ",
+            "Рунге-Кутты явный 4 ",
+            "Рунге-Кутты явный 6",
+            "Рунге-Кутты явный 8",
+            "Рунге-Кутты неявный 2 (трапеция, неявная средняя точка)",
+            "Рунге-Кутты неявный 4 порядка",
+            "Экстраполяционный метод на основе явной средней точки (Грегга-Булирша-Штера)",
+            "Экстраполяционный метод на основе неявной средней точки",
+            "Экстраполяционный метод на основе метода КД (произвольный порядок)",
+            "Композиционный метод на основе метода неявной средней точки",
+            "Композиционный метод на основе метода КД 4 порядка",
+            "Композиционный метод на основе метода КД 6 порядка",
+            "Композиционный метод на основе метода КД 8 порядка",
+            "Многошаговый метод Адамса-Башфорта 2 порядка",
+            "Многошаговый метод Адамса-Башфорта 4 порядка",
+            "Многошаговый метод Адамса-Башфорта 6 порядка",
+            "Адамса-Мультона 2 порядка",
+            "Адамся-Мультона 4 порядка",
+            "Адамса-Мультона 6 порядка",
+            "Многошаговый метод Томинга 3 порядка",
+            "Многошаговый метод Томинга 4 порядка",
+            "Многошаговый метод Томинга 6 порядка"});
+            this.MethodsListBox.Location = new System.Drawing.Point(213, 427);
+            this.MethodsListBox.Name = "MethodsListBox";
+            this.MethodsListBox.Size = new System.Drawing.Size(772, 172);
+            this.MethodsListBox.TabIndex = 25;
             // 
-            // CompMenuItem
+            // timeChart
             // 
-            this.CompMenuItem.Name = "CompMenuItem";
-            this.CompMenuItem.Size = new System.Drawing.Size(105, 20);
-            this.CompMenuItem.Text = "Композиционный";
-            this.CompMenuItem.Click += new System.EventHandler(this.CompMenuItem_Click);
+            chartArea2.AxisX.IsLabelAutoFit = false;
+            chartArea2.AxisY.IsLabelAutoFit = false;
+            chartArea2.Name = "ChartArea1";
+            this.timeChart.ChartAreas.Add(chartArea2);
+            this.timeChart.Location = new System.Drawing.Point(262, 27);
+            this.timeChart.Name = "timeChart";
+            this.timeChart.Size = new System.Drawing.Size(407, 244);
+            this.timeChart.TabIndex = 26;
+            this.timeChart.Text = "chart2";
             // 
-            // ImplicitMenuItem
+            // DecTextBox
             // 
-            this.ImplicitMenuItem.Name = "ImplicitMenuItem";
-            this.ImplicitMenuItem.Size = new System.Drawing.Size(64, 20);
-            this.ImplicitMenuItem.Text = "Неявный";
-            this.ImplicitMenuItem.Click += new System.EventHandler(this.ImplicitMenuItem_Click);
+            this.DecTextBox.Location = new System.Drawing.Point(841, 31);
+            this.DecTextBox.Name = "DecTextBox";
+            this.DecTextBox.Size = new System.Drawing.Size(100, 29);
+            this.DecTextBox.TabIndex = 27;
+            this.DecTextBox.Text = "20";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(947, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 24);
+            this.label1.TabIndex = 28;
+            this.label1.Text = "Dec";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1046, 618);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
+            this.ClientSize = new System.Drawing.Size(1046, 628);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.DecTextBox);
+            this.Controls.Add(this.timeChart);
+            this.Controls.Add(this.MethodsListBox);
+            this.Controls.Add(this.angle2Label);
+            this.Controls.Add(this.angle1Label);
             this.Controls.Add(this.angle2TextBox);
             this.Controls.Add(this.angle1TextBox);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.massLabel);
+            this.Controls.Add(this.lengthLabel);
             this.Controls.Add(this.massTextBox);
             this.Controls.Add(this.lTextBox);
             this.Controls.Add(this.yTextBox);
             this.Controls.Add(this.xTextBox);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.aTextBox);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.aLabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.timeTextBox);
             this.Controls.Add(this.hTextBox);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.mLabel);
             this.Controls.Add(this.mTextBox);
-            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Решение некоторых ДУ";
+            this.Text = "Осциллятор Ван дер Поля";
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.timeChart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -400,36 +410,35 @@ namespace SolvingDE
         #endregion
 
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
-        private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TextBox mTextBox;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label mLabel;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox hTextBox;
         private System.Windows.Forms.TextBox timeTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label aLabel;
         private System.Windows.Forms.TextBox aTextBox;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox xTextBox;
         private System.Windows.Forms.TextBox yTextBox;
         private System.Windows.Forms.TextBox lTextBox;
         private System.Windows.Forms.TextBox massTextBox;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label lengthLabel;
+        private System.Windows.Forms.Label massLabel;
         private System.Windows.Forms.TextBox angle1TextBox;
         private System.Windows.Forms.TextBox angle2TextBox;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label angle1Label;
+        private System.Windows.Forms.Label angle2Label;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem EulerMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem RK2MenuItem;
-        private System.Windows.Forms.ToolStripMenuItem RK4MenuItem;
-        private System.Windows.Forms.ToolStripMenuItem RK8MenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ExtraMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem CompMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ImplicitMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ODU1MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ODU2MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ODU3MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ODU4MenuItem;
+        private System.Windows.Forms.CheckedListBox MethodsListBox;
+        private System.Windows.Forms.DataVisualization.Charting.Chart timeChart;
+        private System.Windows.Forms.TextBox DecTextBox;
+        private System.Windows.Forms.Label label1;
     }
 }
 

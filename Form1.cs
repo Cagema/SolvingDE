@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace SolvingDE
@@ -6,19 +7,28 @@ namespace SolvingDE
     public partial class Form1 : Form
     {
         delegate double[] Van_der_Pol_Method(double[] y, double m, double h);
-        Van_der_Pol_Method newPointVanderPol = EulerMethods.Van_der_Pol;
-        delegate double[] Hamiltonian_Method(double[] y, double h);
-        Hamiltonian_Method newPointHamiltonian = EulerMethods.Hamiltonian;
-        delegate double[] Pendulum_Method(double[] y, double derivative, double h);
-        Pendulum_Method newPointPendulum = EulerMethods.Pendulum;
-        delegate double[][] DoublePendulum_Method(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h);
-        DoublePendulum_Method newValuesDoublePendulum = EulerMethods.DoublePendulum;
+        Van_der_Pol_Method newPointVanderPol = Methods.VdP.RK2;
+        //    delegate double[] Van_der_Pol_Method(double[] y, double m, double h);
+        //    Van_der_Pol_Method newPointVanderPol = EulerMethods.Van_der_Pol;
+        //    delegate double[] Hamiltonian_Method(double[] y, double h);
+        //    Hamiltonian_Method newPointHamiltonian = EulerMethods.Hamiltonian;
+        //    delegate double[] Pendulum_Method(double[] y, double derivative, double h);
+        //    Pendulum_Method newPointPendulum = EulerMethods.Pendulum;
+        //    delegate double[][] DoublePendulum_Method(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h);
+        //    DoublePendulum_Method newValuesDoublePendulum = EulerMethods.DoublePendulum;
+
+        public int selectedODU = 0;
+        Dictionary<int, Van_der_Pol_Method> methods;
 
         public Form1()
         {
             InitializeComponent();
-            this.comboBox1.SelectedIndex = 0;
-
+            this.MethodsListBox.SetItemChecked(0, true);
+            methods = new Dictionary<int, Van_der_Pol_Method>();
+            methods.Add(0, Methods.VdP.RK2);
+            methods.Add(1, Methods.VdP.RK4);
+            methods.Add(2, Methods.VdP.RK6);
+            methods.Add(3, Methods.VdP.RK8);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -26,22 +36,69 @@ namespace SolvingDE
             double h = Convert.ToDouble(this.hTextBox.Text);
             double time = Convert.ToDouble(this.timeTextBox.Text);
             double[] y = new double[] { Convert.ToDouble(this.xTextBox.Text), Convert.ToDouble(this.yTextBox.Text) };
+            int dec = Convert.ToInt32(this.DecTextBox.Text);
 
-            this.chart1.Series[0].Points.Clear();
+            double m = Convert.ToDouble(this.mTextBox.Text);
+            double a = Convert.ToDouble(this.aTextBox.Text);
 
-            switch (this.comboBox1.SelectedIndex)
+            this.chart1.Legends.Clear();
+            this.chart1.Series.Clear();
+            this.timeChart.Series.Clear();
+
+            int sizeArrays = Convert.ToInt32(time / h);
+            double hDec = h / dec;
+            double[][] analytical = new double[sizeArrays][];
+            double[] analyticalY = new double[2];
+            Array.Copy(y, analyticalY, 2);
+            for (int i = 0; i < sizeArrays; i++)
+            {
+                for (int j = 0; j < dec; j++)
+                {
+                    analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
+                }
+
+                analytical[i] = analyticalY;
+            }
+            
+
+            switch (selectedODU)
             {
                 case 0:
                     {
                         // Van der Pol oscillator
-                        double m = Convert.ToDouble(this.mTextBox.Text);
-
-                        for (double t = 0; t < time; t += h)
+                        for (int i = 0, j = 0; i < MethodsListBox.CheckedIndices.Count; i++, j += 2)
                         {
-                            y = newPointVanderPol(y, m, h);
+                            
+                            if (methods.TryGetValue(MethodsListBox.CheckedIndices[i], out newPointVanderPol))
+                            {
+                                this.chart1.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                                this.chart1.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                                
+                                this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
+                                this.timeChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                                this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
+                                this.timeChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
 
-                            this.chart1.Series[0].Points.AddXY(y[0], y[1]);
+                                double[] localY = new double[2];
+                                Array.Copy(y, localY, 2);
+                                for (double t = 0; t < time; t += h)
+                                {
+                                    localY = newPointVanderPol(localY, m, h);
+
+                                    this.chart1.Series[i].Points.AddXY(localY[0], localY[1]);
+
+                                    this.timeChart.Series[j].Points.AddXY(t, localY[0]);
+                                    this.timeChart.Series[j + 1].Points.AddXY(t, localY[1]);
+                                }
+                            }
+                            else
+                            {
+                                continue;
+                                // Skip a method that is not implemented
+                            }
                         }
+
+                        
 
                         break;
                     }
@@ -51,7 +108,7 @@ namespace SolvingDE
                         // Hamiltonian system with inseparable Hamiltonian
                         for (double t = 0; t < time; t += h)
                         {
-                            y = newPointHamiltonian(y, h);
+                            //y = newPointHamiltonian(y, h);
 
                             this.chart1.Series[0].Points.AddXY(y[0], y[1]);
                         }
@@ -62,11 +119,9 @@ namespace SolvingDE
                 case 2:
                     {
                         // Pendulum with indignation
-                        double a = Convert.ToDouble(this.aTextBox.Text);
-
                         for (double t = 0; t < time; t += h)
                         {
-                            y = newPointPendulum(y, a, h);
+                            //y = newPointPendulum(y, a, h);
 
                             this.chart1.Series[0].Points.AddXY(y[0], y[1]);
                         }
@@ -106,9 +161,9 @@ namespace SolvingDE
                             c[0] = p[0] * p[1] * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) / (length[0] * length[1] * (mass[0] + mass[1] * sqrSin));
                             c[1] = ((length[1] * length[1] * mass[1] * p[0] * p[0]) + (length[0] * length[0] * (mass[0] + mass[1]) * p[1] * p[1]) - (length[0] * length[1] * mass[0] * p[0] * p[1] * Math.Cos(Functions.ConvertToRad(angle[0] - angle[1])))) / (2 * length[0] * length[0] * length[1] * length[1] * (mass[0] + mass[1] * sqrSin));
 
-                            double[][] newValues = newValuesDoublePendulum(length, mass, p, angle, c, sqrSin, h);
-                            p = newValues[0];
-                            angle = newValues[1];
+                            //double[][] newValues = newValuesDoublePendulum(length, mass, p, angle, c, sqrSin, h);
+                            //p = newValues[0];
+                            //angle = newValues[1];
 
                             y[0] = length[0] * Math.Cos(Functions.ConvertToRad(angle[0] + 90));
                             y[1] = length[0] * -Math.Sin(Functions.ConvertToRad(angle[0] + 90));
@@ -130,7 +185,7 @@ namespace SolvingDE
                     }
 
                 default:
-                    throw new ArgumentException("comboBox1 not corrected selected index");
+                    throw new ArgumentException("selectedODU not corrected value");
             }
         }
 
@@ -149,55 +204,60 @@ namespace SolvingDE
             return value;
         }
 
-        private void EulerMenuItem_Click(object sender, EventArgs e)
+        private void ODU1MenuItem_Click(object sender, EventArgs e)
         {
-            this.Text = "Решение ДУ методом Эйлера";
-            newPointVanderPol = EulerMethods.Van_der_Pol;
-            newPointHamiltonian = EulerMethods.Hamiltonian;
-            newPointPendulum = EulerMethods.Pendulum;
-            newValuesDoublePendulum = EulerMethods.DoublePendulum;
+            selectedODU = 0;
+            this.Text = "Осциллятор Ван дер Поля";
+            mLabel.Visible = true;
+            mTextBox.Visible = true;
+            aLabel.Visible = false;
+            aTextBox.Visible = false;
+            ShowFieldsDP(false);
         }
 
-        private void RK2MenuItem_Click(object sender, EventArgs e)
+        private void ODU2MenuItem_Click(object sender, EventArgs e)
         {
-            this.Text = "Решение ДУ методом Рунге-Кутты 2 порядка";
-            newPointVanderPol = RungeKutta2Methods.Van_der_Pol;
-            newPointHamiltonian = RungeKutta2Methods.Hamiltonian;
-            newPointPendulum = RungeKutta2Methods.Pendulum;
-            newValuesDoublePendulum = RungeKutta2Methods.DoublePendulum;
+            selectedODU = 1;
+            this.Text = "Гамильтонова система с неразделяемым гамильтонианом";
+            mLabel.Visible = false;
+            mTextBox.Visible = false;
+            aLabel.Visible = false;
+            aTextBox.Visible = false;
+            ShowFieldsDP(false);
         }
 
-        private void RK4MenuItem_Click(object sender, EventArgs e)
+        private void ODU3MenuItem_Click(object sender, EventArgs e)
         {
-            this.Text = "Решение ДУ методом Рунге-Кутты 4 порядка";
-            newPointVanderPol = RungeKutta4Methods.Van_der_Pol;
-            newPointHamiltonian = RungeKutta4Methods.Hamiltonian;
-            newPointPendulum = RungeKutta4Methods.Pendulum;
-            newValuesDoublePendulum = RungeKutta4Methods.DoublePendulum;
+            selectedODU = 2;
+            this.Text = "Маятник с возмущением";
+            mLabel.Visible = false;
+            mTextBox.Visible = false;
+            aLabel.Visible = true;
+            aTextBox.Visible = true;
+            ShowFieldsDP(false);
         }
 
-        private void RK8MenuItem_Click(object sender, EventArgs e)
+        private void ODU4MenuItem_Click(object sender, EventArgs e)
         {
-            this.Text = "Решение ДУ методом Рунге-Кутты 8 порядка";
-            newPointVanderPol = RungeKutta8Methods.Van_der_Pol;
-            newPointHamiltonian = RungeKutta8Methods.Hamiltonian;
-            newPointPendulum = RungeKutta8Methods.Pendulum;
-            newValuesDoublePendulum = RungeKutta8Methods.DoublePendulum;
+            selectedODU = 3;
+            this.Text = "Двойной маятник";
+            mLabel.Visible = false;
+            mTextBox.Visible = false;
+            aLabel.Visible = false;
+            aTextBox.Visible = false;
+            ShowFieldsDP(true);
         }
 
-        private void ImplicitMenuItem_Click(object sender, EventArgs e)
+        private void ShowFieldsDP(bool show)
         {
-            this.Text = "Решение ДУ неявным методом";
-        }
-
-        private void ExtraMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Text = "Решение ДУ методом экстраполятора";
-        }
-
-        private void CompMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Text = "Решение ДУ композиционным методом";
+            lengthLabel.Visible = show;
+            lTextBox.Visible = show;
+            massLabel.Visible = show;
+            massTextBox.Visible = show;
+            angle1Label.Visible = show;
+            angle1TextBox.Visible = show;
+            angle2Label.Visible = show;
+            angle2TextBox.Visible = show;
         }
     }
 }
