@@ -29,8 +29,10 @@ namespace SolvingDE
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.mTextBox = new System.Windows.Forms.TextBox();
             this.mLabel = new System.Windows.Forms.Label();
@@ -61,19 +63,26 @@ namespace SolvingDE
             this.timeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.DecTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.globalChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.efficiencyChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.ArrayHTextBox = new System.Windows.Forms.TextBox();
+            this.ErrorsTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.globalChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.efficiencyChart)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
             // 
-            chartArea1.AxisX.IsLabelAutoFit = false;
-            chartArea1.AxisX.LabelStyle.Format = "0.0";
-            chartArea1.AxisY.IsLabelAutoFit = false;
-            chartArea1.AxisY.LabelStyle.Format = "0.0";
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
+            chartArea5.AxisX.IsLabelAutoFit = false;
+            chartArea5.AxisX.LabelStyle.Format = "0.0";
+            chartArea5.AxisY.IsLabelAutoFit = false;
+            chartArea5.AxisY.LabelStyle.Format = "0.0";
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
             this.chart1.Location = new System.Drawing.Point(12, 27);
             this.chart1.Name = "chart1";
             this.chart1.Size = new System.Drawing.Size(244, 244);
@@ -99,7 +108,7 @@ namespace SolvingDE
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 427);
+            this.button1.Location = new System.Drawing.Point(12, 555);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(147, 44);
             this.button1.TabIndex = 4;
@@ -328,17 +337,17 @@ namespace SolvingDE
             "Многошаговый метод Томинга 3 порядка",
             "Многошаговый метод Томинга 4 порядка",
             "Многошаговый метод Томинга 6 порядка"});
-            this.MethodsListBox.Location = new System.Drawing.Point(213, 427);
+            this.MethodsListBox.Location = new System.Drawing.Point(676, 427);
             this.MethodsListBox.Name = "MethodsListBox";
-            this.MethodsListBox.Size = new System.Drawing.Size(772, 172);
+            this.MethodsListBox.Size = new System.Drawing.Size(309, 172);
             this.MethodsListBox.TabIndex = 25;
             // 
             // timeChart
             // 
-            chartArea2.AxisX.IsLabelAutoFit = false;
-            chartArea2.AxisY.IsLabelAutoFit = false;
-            chartArea2.Name = "ChartArea1";
-            this.timeChart.ChartAreas.Add(chartArea2);
+            chartArea6.AxisX.IsLabelAutoFit = false;
+            chartArea6.AxisY.IsLabelAutoFit = false;
+            chartArea6.Name = "ChartArea1";
+            this.timeChart.ChartAreas.Add(chartArea6);
             this.timeChart.Location = new System.Drawing.Point(262, 27);
             this.timeChart.Name = "timeChart";
             this.timeChart.Size = new System.Drawing.Size(407, 244);
@@ -362,11 +371,74 @@ namespace SolvingDE
             this.label1.TabIndex = 28;
             this.label1.Text = "Dec";
             // 
+            // globalChart
+            // 
+            chartArea7.AxisX.IsLabelAutoFit = false;
+            chartArea7.AxisY.IsLabelAutoFit = false;
+            chartArea7.Name = "ChartArea1";
+            this.globalChart.ChartAreas.Add(chartArea7);
+            this.globalChart.Location = new System.Drawing.Point(12, 277);
+            this.globalChart.Name = "globalChart";
+            this.globalChart.Size = new System.Drawing.Size(407, 244);
+            this.globalChart.TabIndex = 29;
+            this.globalChart.Text = "chart2";
+            // 
+            // efficiencyChart
+            // 
+            chartArea8.AxisX.LabelStyle.Format = "0.0";
+            chartArea8.AxisX.Title = "Затраченное время";
+            chartArea8.AxisY.IsLabelAutoFit = false;
+            chartArea8.AxisY.LabelStyle.Format = "0.0";
+            chartArea8.AxisY.Title = "Ошибка";
+            chartArea8.Name = "ChartArea1";
+            this.efficiencyChart.ChartAreas.Add(chartArea8);
+            this.efficiencyChart.Location = new System.Drawing.Point(12, 27);
+            this.efficiencyChart.Name = "efficiencyChart";
+            this.efficiencyChart.Size = new System.Drawing.Size(658, 494);
+            this.efficiencyChart.TabIndex = 30;
+            this.efficiencyChart.Text = "chart3";
+            this.efficiencyChart.Visible = false;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(676, 393);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(157, 28);
+            this.checkBox1.TabIndex = 31;
+            this.checkBox1.Text = "Массив шагов";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // ArrayHTextBox
+            // 
+            this.ArrayHTextBox.Location = new System.Drawing.Point(833, 391);
+            this.ArrayHTextBox.Name = "ArrayHTextBox";
+            this.ArrayHTextBox.Size = new System.Drawing.Size(198, 29);
+            this.ArrayHTextBox.TabIndex = 32;
+            this.ArrayHTextBox.Text = "0,01 0,02 0,04 0,06 0,08 0,1 0,12 0,14 0,16 0,18 0,2";
+            this.ArrayHTextBox.Visible = false;
+            // 
+            // ErrorsTextBox
+            // 
+            this.ErrorsTextBox.AllowDrop = true;
+            this.ErrorsTextBox.Location = new System.Drawing.Point(675, 281);
+            this.ErrorsTextBox.Multiline = true;
+            this.ErrorsTextBox.Name = "ErrorsTextBox";
+            this.ErrorsTextBox.ReadOnly = true;
+            this.ErrorsTextBox.Size = new System.Drawing.Size(356, 106);
+            this.ErrorsTextBox.TabIndex = 33;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1046, 628);
+            this.Controls.Add(this.ErrorsTextBox);
+            this.Controls.Add(this.efficiencyChart);
+            this.Controls.Add(this.ArrayHTextBox);
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.globalChart);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.DecTextBox);
             this.Controls.Add(this.timeChart);
@@ -402,6 +474,8 @@ namespace SolvingDE
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.globalChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.efficiencyChart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -439,6 +513,11 @@ namespace SolvingDE
         private System.Windows.Forms.DataVisualization.Charting.Chart timeChart;
         private System.Windows.Forms.TextBox DecTextBox;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DataVisualization.Charting.Chart globalChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart efficiencyChart;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.TextBox ArrayHTextBox;
+        private System.Windows.Forms.TextBox ErrorsTextBox;
     }
 }
 

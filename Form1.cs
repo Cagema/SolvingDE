@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace SolvingDE
@@ -18,22 +19,31 @@ namespace SolvingDE
         //    DoublePendulum_Method newValuesDoublePendulum = EulerMethods.DoublePendulum;
 
         public int selectedODU = 0;
-        Dictionary<int, Van_der_Pol_Method> methods;
+        Dictionary<int, Van_der_Pol_Method> methodsVdP;
 
         public Form1()
         {
             InitializeComponent();
             this.MethodsListBox.SetItemChecked(0, true);
-            methods = new Dictionary<int, Van_der_Pol_Method>();
-            methods.Add(0, Methods.VdP.RK2);
-            methods.Add(1, Methods.VdP.RK4);
-            methods.Add(2, Methods.VdP.RK6);
-            methods.Add(3, Methods.VdP.RK8);
+            methodsVdP = new Dictionary<int, Van_der_Pol_Method>
+            {
+                { 0, Methods.VdP.RK2 },
+                { 1, Methods.VdP.RK4 },
+                { 2, Methods.VdP.RK6 },
+                { 3, Methods.VdP.RK8 }
+            };
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             double h = Convert.ToDouble(this.hTextBox.Text);
+            string[] hStrings = this.ArrayHTextBox.Text.Split(' ');
+            double[] hArray = new double[hStrings.Length];
+            for (int i = 0; i < hStrings.Length; i++)
+            {
+                hArray[i] = Convert.ToDouble(hStrings[i]);
+            }
+
             double time = Convert.ToDouble(this.timeTextBox.Text);
             double[] y = new double[] { Convert.ToDouble(this.xTextBox.Text), Convert.ToDouble(this.yTextBox.Text) };
             int dec = Convert.ToInt32(this.DecTextBox.Text);
@@ -44,51 +54,105 @@ namespace SolvingDE
             this.chart1.Legends.Clear();
             this.chart1.Series.Clear();
             this.timeChart.Series.Clear();
+            this.globalChart.Series.Clear();
+            this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = false;
+            this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = false;
+            this.efficiencyChart.Series.Clear();
 
-            int sizeArrays = Convert.ToInt32(time / h);
-            double hDec = h / dec;
-            double[][] analytical = new double[sizeArrays][];
-            double[] analyticalY = new double[2];
-            Array.Copy(y, analyticalY, 2);
-            for (int i = 0; i < sizeArrays; i++)
-            {
-                for (int j = 0; j < dec; j++)
-                {
-                    analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
-                }
-
-                analytical[i] = analyticalY;
-            }
+            ErrorsTextBox.Text = "";
             
 
             switch (selectedODU)
             {
                 case 0:
                     {
-                        // Van der Pol oscillator
-                        for (int i = 0, j = 0; i < MethodsListBox.CheckedIndices.Count; i++, j += 2)
-                        {
-                            
-                            if (methods.TryGetValue(MethodsListBox.CheckedIndices[i], out newPointVanderPol))
-                            {
-                                this.chart1.Series.Add(MethodsListBox.CheckedItems[i].ToString());
-                                this.chart1.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-                                
-                                this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
-                                this.timeChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-                                this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
-                                this.timeChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                        int sizeArrays = Convert.ToInt32(time / h);
+                        double hDec = h / dec;
+                        double[][] analytical = new double[sizeArrays][];
+                        double[] analyticalY = new double[2];
+                        Array.Copy(y, analyticalY, 2);
 
+                        for (int i = 0; i < sizeArrays; i++)
+                        {
+                            for (int j = 0; j < dec; j++)
+                            {
+                                analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
+                            }
+
+                            analytical[i] = new double[2];
+                            analytical[i][0] = analyticalY[0];
+                            analytical[i][1] = analyticalY[1];
+                        }
+
+                        // Van der Pol oscillator
+                        int methodsChecked = MethodsListBox.CheckedIndices.Count;
+                        double[][][] solution = new double[methodsChecked][][];
+                        TimeSpan[][] timeSpent = new TimeSpan[methodsChecked][];
+                        double[][] maxValues = new double[methodsChecked][];
+                        for (int i = 0, j = 0; i < methodsChecked; i++, j += 2)
+                        { 
+                            if (methodsVdP.TryGetValue(MethodsListBox.CheckedIndices[i], out newPointVanderPol))
+                            {
+                                solution[i] = new double[sizeArrays][];
                                 double[] localY = new double[2];
                                 Array.Copy(y, localY, 2);
-                                for (double t = 0; t < time; t += h)
+
+                                for (int step = 0; step < sizeArrays; step++)
                                 {
                                     localY = newPointVanderPol(localY, m, h);
+                                    solution[i][step] = new double[2];
+                                    solution[i][step][0] = localY[0];
+                                    solution[i][step][1] = localY[1];
+                                }
 
-                                    this.chart1.Series[i].Points.AddXY(localY[0], localY[1]);
+                                if (checkBox1.Checked)
+                                {
+                                    timeSpent[i] = new TimeSpan[hArray.Length];
+                                    maxValues[i] = new double[hArray.Length];
+                                    for (int indexH = 0; indexH < hArray.Length; indexH++)
+                                    {
+                                        double maxValue = double.MinValue;
+                                        int sizeDerivation = Convert.ToInt32(time / hArray[indexH]);
+                                        double[][] derivation = new double[sizeDerivation][];
+                                        double[][] analyticalDerivation = new double[sizeDerivation][];
+                                        derivation[0] = y;
 
-                                    this.timeChart.Series[j].Points.AddXY(t, localY[0]);
-                                    this.timeChart.Series[j + 1].Points.AddXY(t, localY[1]);
+                                        hDec = hArray[indexH] / dec;
+                                        analyticalY = new double[2];
+                                        Array.Copy(y, analyticalY, 2);
+                                        for (int step = 0; step < sizeDerivation; step++)
+                                        {
+                                            for (int littleStep = 0; littleStep < dec; littleStep++)
+                                            {
+                                                analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
+                                            }
+
+                                            analyticalDerivation[step] = new double[2];
+                                            analyticalDerivation[step][0] = analyticalY[0];
+                                            analyticalDerivation[step][1] = analyticalY[1];
+                                        }
+
+                                        Stopwatch stopWatch = new Stopwatch();
+                                        stopWatch.Start();
+
+                                        for (int step = 0; step < sizeDerivation - 1; step++)
+                                        {
+                                            derivation[step+1] = newPointVanderPol(derivation[step], m, hArray[indexH]);
+                                        }
+
+                                        stopWatch.Stop();
+                                        TimeSpan ts = stopWatch.Elapsed;
+                                        timeSpent[i][indexH] = ts;
+
+                                        for (int step = 0; step < sizeDerivation; step++)
+                                        {
+                                            if (Math.Abs(derivation[step][0] - analyticalDerivation[step][0]) > maxValue) maxValue = Math.Abs(derivation[step][0] - analyticalDerivation[step][0]);
+                                            if (Math.Abs(derivation[step][1] - analyticalDerivation[step][1]) > maxValue) maxValue = Math.Abs(derivation[step][1] - analyticalDerivation[step][1]);
+                                        }
+
+                                        maxValues[i][indexH] = maxValue;
+                                        ErrorsTextBox.Text += maxValue.ToString() + ' ';
+                                    }
                                 }
                             }
                             else
@@ -98,7 +162,56 @@ namespace SolvingDE
                             }
                         }
 
-                        
+                        // Build plots
+                        for (int i = 0, j = 0; i < methodsChecked; i++, j += 2)
+                        {
+                            this.chart1.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                            this.chart1.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+                            this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
+                            this.timeChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.timeChart.Series[j].BorderWidth = 3;
+                            this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
+                            this.timeChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.timeChart.Series[j + 1].BorderWidth = 3;
+
+                            this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
+                            this.globalChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.globalChart.Series[j].BorderWidth = 3;
+                            this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
+                            this.globalChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.globalChart.Series[j + 1].BorderWidth = 3;
+
+                            if (checkBox1.Checked)
+                            {
+                                this.efficiencyChart.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                                this.efficiencyChart.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+                                for (int indexH = 0; indexH < hArray.Length; indexH++)
+                                {
+                                    this.efficiencyChart.Series[i].Points.AddXY(timeSpent[i][indexH].TotalMilliseconds, maxValues[i][indexH]);
+                                }
+
+                                this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = true;
+                                this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = true;
+                            }
+                            else
+                            {
+                                for (int step = 0; step < sizeArrays; step++)
+                                {
+                                    this.chart1.Series[i].Points.AddXY(solution[i][step][0], solution[i][step][1]);
+
+                                    this.timeChart.Series[j].Points.AddXY(step, solution[i][step][0]);
+                                    this.timeChart.Series[j + 1].Points.AddXY(step, solution[i][step][1]);
+
+                                    double globalX = solution[i][step][0] - analytical[step][0];
+                                    double globalY = solution[i][step][1] - analytical[step][1];
+
+                                    this.globalChart.Series[j].Points.AddXY(step, globalX);
+                                    this.globalChart.Series[j + 1].Points.AddXY(step, globalY);
+                                }
+                            }
+                        }
 
                         break;
                     }
@@ -258,6 +371,12 @@ namespace SolvingDE
             angle1TextBox.Visible = show;
             angle2Label.Visible = show;
             angle2TextBox.Visible = show;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            ArrayHTextBox.Visible = !ArrayHTextBox.Visible;
+            efficiencyChart.Visible = !efficiencyChart.Visible;
         }
     }
 }
