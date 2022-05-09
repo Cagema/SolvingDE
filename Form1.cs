@@ -36,8 +36,12 @@ namespace SolvingDE
 
         private void button1_Click(object sender, EventArgs e)
         {
-            double h = Convert.ToDouble(this.hTextBox.Text);
-            string[] hStrings = this.ArrayHTextBox.Text.Split(' ');
+            string h = this.hTextBox.Text;
+            if (checkBox1.Checked)
+            {
+                h += ' ' + this.ArrayHTextBox.Text;
+            }
+            string[] hStrings = h.Split(' ');
             double[] hArray = new double[hStrings.Length];
             for (int i = 0; i < hStrings.Length; i++)
             {
@@ -58,107 +62,85 @@ namespace SolvingDE
             this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = false;
             this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = false;
             this.efficiencyChart.Series.Clear();
-
-            ErrorsTextBox.Text = "";
             
 
             switch (selectedODU)
             {
+                // Van der Pol oscillator
                 case 0:
                     {
-                        int sizeArrays = Convert.ToInt32(time / h);
-                        double hDec = h / dec;
-                        double[][] analytical = new double[sizeArrays][];
-                        double[] analyticalY = new double[2];
-                        Array.Copy(y, analyticalY, 2);
+                        double[][][] analytical = new double[hArray.Length][][];
+                        double[][][][] solution = new double[hArray.Length][][][];
+                        double[][] timeSpent = new double[hArray.Length][];
+                        double[][] maxErrors = new double[hArray.Length][];
 
-                        for (int i = 0; i < sizeArrays; i++)
-                        {
-                            for (int j = 0; j < dec; j++)
-                            {
-                                analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
-                            }
-
-                            analytical[i] = new double[2];
-                            analytical[i][0] = analyticalY[0];
-                            analytical[i][1] = analyticalY[1];
-                        }
-
-                        // Van der Pol oscillator
                         int methodsChecked = MethodsListBox.CheckedIndices.Count;
-                        double[][][] solution = new double[methodsChecked][][];
-                        TimeSpan[][] timeSpent = new TimeSpan[methodsChecked][];
-                        double[][] maxValues = new double[methodsChecked][];
-                        for (int i = 0, j = 0; i < methodsChecked; i++, j += 2)
-                        { 
-                            if (methodsVdP.TryGetValue(MethodsListBox.CheckedIndices[i], out newPointVanderPol))
+
+                        for (int stepSizeIndex = 0; stepSizeIndex < hArray.Length; stepSizeIndex++)
+                        {
+                            int sizeArrays = Convert.ToInt32(time / hArray[stepSizeIndex]);
+                            double hDec = hArray[stepSizeIndex] / dec;
+                            analytical[stepSizeIndex] = new double[sizeArrays][];
+                            double[] analyticalY = new double[2];
+                            Array.Copy(y, analyticalY, 2);
+
+                            for (int i = 0; i < sizeArrays; i++)
                             {
-                                solution[i] = new double[sizeArrays][];
-                                double[] localY = new double[2];
-                                Array.Copy(y, localY, 2);
-
-                                for (int step = 0; step < sizeArrays; step++)
+                                for (int indexDec = 0; indexDec < dec; indexDec++)
                                 {
-                                    localY = newPointVanderPol(localY, m, h);
-                                    solution[i][step] = new double[2];
-                                    solution[i][step][0] = localY[0];
-                                    solution[i][step][1] = localY[1];
+                                    analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
                                 }
 
-                                if (checkBox1.Checked)
-                                {
-                                    timeSpent[i] = new TimeSpan[hArray.Length];
-                                    maxValues[i] = new double[hArray.Length];
-                                    for (int indexH = 0; indexH < hArray.Length; indexH++)
-                                    {
-                                        double maxValue = double.MinValue;
-                                        int sizeDerivation = Convert.ToInt32(time / hArray[indexH]);
-                                        double[][] derivation = new double[sizeDerivation][];
-                                        double[][] analyticalDerivation = new double[sizeDerivation][];
-                                        derivation[0] = y;
-
-                                        hDec = hArray[indexH] / dec;
-                                        analyticalY = new double[2];
-                                        Array.Copy(y, analyticalY, 2);
-                                        for (int step = 0; step < sizeDerivation; step++)
-                                        {
-                                            for (int littleStep = 0; littleStep < dec; littleStep++)
-                                            {
-                                                analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
-                                            }
-
-                                            analyticalDerivation[step] = new double[2];
-                                            analyticalDerivation[step][0] = analyticalY[0];
-                                            analyticalDerivation[step][1] = analyticalY[1];
-                                        }
-
-                                        Stopwatch stopWatch = new Stopwatch();
-                                        stopWatch.Start();
-
-                                        for (int step = 0; step < sizeDerivation - 1; step++)
-                                        {
-                                            derivation[step+1] = newPointVanderPol(derivation[step], m, hArray[indexH]);
-                                        }
-
-                                        stopWatch.Stop();
-                                        TimeSpan ts = stopWatch.Elapsed;
-                                        timeSpent[i][indexH] = ts;
-
-                                        for (int step = 0; step < sizeDerivation; step++)
-                                        {
-                                            if (Math.Abs(derivation[step][0] - analyticalDerivation[step][0]) > maxValue) maxValue = Math.Abs(derivation[step][0] - analyticalDerivation[step][0]);
-                                            if (Math.Abs(derivation[step][1] - analyticalDerivation[step][1]) > maxValue) maxValue = Math.Abs(derivation[step][1] - analyticalDerivation[step][1]);
-                                        }
-
-                                        maxValues[i][indexH] = maxValue;
-                                        ErrorsTextBox.Text += maxValue.ToString() + ' ';
-                                    }
-                                }
+                                analytical[stepSizeIndex][i] = new double[2];
+                                analytical[stepSizeIndex][i][0] = analyticalY[0];
+                                analytical[stepSizeIndex][i][1] = analyticalY[1];
                             }
-                            else
+
+                            solution[stepSizeIndex] = new double[methodsChecked][][];
+                            timeSpent[stepSizeIndex] = new double[methodsChecked];
+                            maxErrors[stepSizeIndex] = new double[methodsChecked];
+
+                            for (int methodIndex = 0; methodIndex < methodsChecked; methodIndex++)
                             {
-                                continue;
-                                // Skip a method that is not implemented
+                                if (methodsVdP.TryGetValue(MethodsListBox.CheckedIndices[methodIndex], out newPointVanderPol))
+                                {
+                                    solution[stepSizeIndex][methodIndex] = new double[sizeArrays][];
+                                    double[] localY = new double[2];
+                                    Array.Copy(y, localY, 2);
+                                    solution[stepSizeIndex][methodIndex][0] = new double[2];
+                                    solution[stepSizeIndex][methodIndex][0][0] = localY[0];
+                                    solution[stepSizeIndex][methodIndex][0][1] = localY[1];
+
+                                    Stopwatch stopWatch = new Stopwatch();
+                                    stopWatch.Start();
+
+                                    for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+                                    {
+                                        localY = newPointVanderPol(localY, m, hArray[stepSizeIndex]);
+                                        solution[stepSizeIndex][methodIndex][stepIndex] = new double[2];
+                                        solution[stepSizeIndex][methodIndex][stepIndex][0] = localY[0];
+                                        solution[stepSizeIndex][methodIndex][stepIndex][1] = localY[1];
+                                    }
+
+                                    stopWatch.Stop();
+                                    TimeSpan ts = stopWatch.Elapsed;
+                                    timeSpent[stepSizeIndex][methodIndex] = ts.TotalMilliseconds;
+
+                                    //FindMaxError
+                                    double maxError = double.MinValue;
+                                    for (int stepIndex = 0; stepIndex < sizeArrays; stepIndex++)
+                                    {
+                                        if (Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][0] - analytical[stepSizeIndex][stepIndex][0]) > maxError) maxError = Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][0] - analytical[stepSizeIndex][stepIndex][0]);
+                                        if (Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][1] - analytical[stepSizeIndex][stepIndex][1]) > maxError) maxError = Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][1] - analytical[stepSizeIndex][stepIndex][1]);
+                                    }
+
+                                    maxErrors[stepSizeIndex][methodIndex] = maxError;
+                                }
+                                else
+                                {
+                                    continue;
+                                    // Skip a method that is not implemented
+                                }
                             }
                         }
 
@@ -182,34 +164,30 @@ namespace SolvingDE
                             this.globalChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
                             this.globalChart.Series[j + 1].BorderWidth = 3;
 
-                            if (checkBox1.Checked)
+
+                            this.efficiencyChart.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                            this.efficiencyChart.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+                            for (int stepSizeIndex = 0; stepSizeIndex < hArray.Length; stepSizeIndex++)
                             {
-                                this.efficiencyChart.Series.Add(MethodsListBox.CheckedItems[i].ToString());
-                                this.efficiencyChart.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-
-                                for (int indexH = 0; indexH < hArray.Length; indexH++)
-                                {
-                                    this.efficiencyChart.Series[i].Points.AddXY(timeSpent[i][indexH].TotalMilliseconds, maxValues[i][indexH]);
-                                }
-
-                                this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = true;
-                                this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = true;
+                                this.efficiencyChart.Series[i].Points.AddXY(timeSpent[stepSizeIndex][i], maxErrors[stepSizeIndex][i]);
                             }
-                            else
+
+                            this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = true;
+                            this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = true;
+
+                            for (int step = 0; step < time / hArray[0]; step++)
                             {
-                                for (int step = 0; step < sizeArrays; step++)
-                                {
-                                    this.chart1.Series[i].Points.AddXY(solution[i][step][0], solution[i][step][1]);
+                                this.chart1.Series[i].Points.AddXY(solution[0][i][step][0], solution[0][i][step][1]);
 
-                                    this.timeChart.Series[j].Points.AddXY(step, solution[i][step][0]);
-                                    this.timeChart.Series[j + 1].Points.AddXY(step, solution[i][step][1]);
+                                this.timeChart.Series[j].Points.AddXY(step, solution[0][i][step][0]);
+                                this.timeChart.Series[j + 1].Points.AddXY(step, solution[0][i][step][1]);
 
-                                    double globalX = solution[i][step][0] - analytical[step][0];
-                                    double globalY = solution[i][step][1] - analytical[step][1];
+                                double globalX = solution[0][i][step][0] - analytical[0][step][0];
+                                double globalY = solution[0][i][step][1] - analytical[0][step][1];
 
-                                    this.globalChart.Series[j].Points.AddXY(step, globalX);
-                                    this.globalChart.Series[j + 1].Points.AddXY(step, globalY);
-                                }
+                                this.globalChart.Series[j].Points.AddXY(step, globalX);
+                                this.globalChart.Series[j + 1].Points.AddXY(step, globalY);
                             }
                         }
 
@@ -219,12 +197,12 @@ namespace SolvingDE
                 case 1:
                     {
                         // Hamiltonian system with inseparable Hamiltonian
-                        for (double t = 0; t < time; t += h)
-                        {
-                            //y = newPointHamiltonian(y, h);
+                        //for (double t = 0; t < time; t += h)
+                        //{
+                        //    y = newPointHamiltonian(y, h);
 
-                            this.chart1.Series[0].Points.AddXY(y[0], y[1]);
-                        }
+                        //    this.chart1.Series[0].Points.AddXY(y[0], y[1]);
+                        //}
 
                         break;
                     }
@@ -232,12 +210,12 @@ namespace SolvingDE
                 case 2:
                     {
                         // Pendulum with indignation
-                        for (double t = 0; t < time; t += h)
-                        {
-                            //y = newPointPendulum(y, a, h);
+                        //for (double t = 0; t < time; t += h)
+                        //{
+                        //    y = newPointPendulum(y, a, h);
 
-                            this.chart1.Series[0].Points.AddXY(y[0], y[1]);
-                        }
+                        //    this.chart1.Series[0].Points.AddXY(y[0], y[1]);
+                        //}
 
                         break;
                     }
@@ -245,54 +223,54 @@ namespace SolvingDE
                 case 3:
                     {
                         // double pendulum
-                        double mass1 = Convert.ToDouble(this.massTextBox.Text);
-                        mass1 = CheckInputMassAndL(mass1);
-                        double[] mass = new double[] {mass1, mass1};
+                        //double mass1 = Convert.ToDouble(this.massTextBox.Text);
+                        //mass1 = CheckInputMassAndL(mass1);
+                        //double[] mass = new double[] {mass1, mass1};
 
-                        double l1 = Convert.ToDouble(this.lTextBox.Text);
-                        l1 = CheckInputMassAndL(l1);
-                        double[] length = new double[] {l1, l1};
+                        //double l1 = Convert.ToDouble(this.lTextBox.Text);
+                        //l1 = CheckInputMassAndL(l1);
+                        //double[] length = new double[] {l1, l1};
 
-                        double[] angle = new double[] { Convert.ToDouble(this.angle1TextBox.Text), Convert.ToDouble(this.angle2TextBox.Text) };
+                        //double[] angle = new double[] { Convert.ToDouble(this.angle1TextBox.Text), Convert.ToDouble(this.angle2TextBox.Text) };
 
-                        double[] c = new double[2];
-                        double[] p = new double[2];
+                        //double[] c = new double[2];
+                        //double[] p = new double[2];
 
-                        this.chart1.Series[0].Points.AddXY(0, 0);
-                        this.chart1.Series[0].Points.AddXY(0, 0);
-                        this.chart1.Series[0].Points.AddXY(0, 0);
-                        this.chart1.ChartAreas[0].AxisX.Maximum = 30;
-                        this.chart1.ChartAreas[0].AxisX.Minimum = -30;
-                        this.chart1.ChartAreas[0].AxisY.Maximum = 30;
-                        this.chart1.ChartAreas[0].AxisY.Minimum = -30;
-                        this.chart1.ChartAreas[0].AxisY.Interval = 5;
-                        this.chart1.ChartAreas[0].AxisX.Interval = 5;
+                        //this.chart1.Series[0].Points.AddXY(0, 0);
+                        //this.chart1.Series[0].Points.AddXY(0, 0);
+                        //this.chart1.Series[0].Points.AddXY(0, 0);
+                        //this.chart1.ChartAreas[0].AxisX.Maximum = 30;
+                        //this.chart1.ChartAreas[0].AxisX.Minimum = -30;
+                        //this.chart1.ChartAreas[0].AxisY.Maximum = 30;
+                        //this.chart1.ChartAreas[0].AxisY.Minimum = -30;
+                        //this.chart1.ChartAreas[0].AxisY.Interval = 5;
+                        //this.chart1.ChartAreas[0].AxisX.Interval = 5;
 
-                        for (double t = 0; t < time; t += h)
-                        {
-                            double sqrSin = Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1]));
-                            c[0] = p[0] * p[1] * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) / (length[0] * length[1] * (mass[0] + mass[1] * sqrSin));
-                            c[1] = ((length[1] * length[1] * mass[1] * p[0] * p[0]) + (length[0] * length[0] * (mass[0] + mass[1]) * p[1] * p[1]) - (length[0] * length[1] * mass[0] * p[0] * p[1] * Math.Cos(Functions.ConvertToRad(angle[0] - angle[1])))) / (2 * length[0] * length[0] * length[1] * length[1] * (mass[0] + mass[1] * sqrSin));
+                        //for (double t = 0; t < time; t += h)
+                        //{
+                        //    double sqrSin = Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1]));
+                        //    c[0] = p[0] * p[1] * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) / (length[0] * length[1] * (mass[0] + mass[1] * sqrSin));
+                        //    c[1] = ((length[1] * length[1] * mass[1] * p[0] * p[0]) + (length[0] * length[0] * (mass[0] + mass[1]) * p[1] * p[1]) - (length[0] * length[1] * mass[0] * p[0] * p[1] * Math.Cos(Functions.ConvertToRad(angle[0] - angle[1])))) / (2 * length[0] * length[0] * length[1] * length[1] * (mass[0] + mass[1] * sqrSin));
 
-                            //double[][] newValues = newValuesDoublePendulum(length, mass, p, angle, c, sqrSin, h);
-                            //p = newValues[0];
-                            //angle = newValues[1];
+                        //    double[][] newValues = newValuesDoublePendulum(length, mass, p, angle, c, sqrSin, h);
+                        //    p = newValues[0];
+                        //    angle = newValues[1];
 
-                            y[0] = length[0] * Math.Cos(Functions.ConvertToRad(angle[0] + 90));
-                            y[1] = length[0] * -Math.Sin(Functions.ConvertToRad(angle[0] + 90));
-                            this.chart1.Series[0].Points[1] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
-                            y[0] += length[1] * Math.Cos(Functions.ConvertToRad(angle[1] + 90));
-                            y[1] += length[1] * -Math.Sin(Functions.ConvertToRad(angle[1] + 90));
-                            this.chart1.Series[0].Points[2] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
-                            this.chart1.Update();
-                        }
+                        //    y[0] = length[0] * Math.Cos(Functions.ConvertToRad(angle[0] + 90));
+                        //    y[1] = length[0] * -Math.Sin(Functions.ConvertToRad(angle[0] + 90));
+                        //    this.chart1.Series[0].Points[1] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
+                        //    y[0] += length[1] * Math.Cos(Functions.ConvertToRad(angle[1] + 90));
+                        //    y[1] += length[1] * -Math.Sin(Functions.ConvertToRad(angle[1] + 90));
+                        //    this.chart1.Series[0].Points[2] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
+                        //    this.chart1.Update();
+                        //}
 
-                        this.chart1.ChartAreas[0].AxisX.Maximum = double.NaN;
-                        this.chart1.ChartAreas[0].AxisX.Minimum = double.NaN;
-                        this.chart1.ChartAreas[0].AxisY.Maximum = double.NaN;
-                        this.chart1.ChartAreas[0].AxisY.Minimum = double.NaN;
-                        this.chart1.ChartAreas[0].AxisY.Interval = double.NaN;
-                        this.chart1.ChartAreas[0].AxisX.Interval = double.NaN;
+                        //this.chart1.ChartAreas[0].AxisX.Maximum = double.NaN;
+                        //this.chart1.ChartAreas[0].AxisX.Minimum = double.NaN;
+                        //this.chart1.ChartAreas[0].AxisY.Maximum = double.NaN;
+                        //this.chart1.ChartAreas[0].AxisY.Minimum = double.NaN;
+                        //this.chart1.ChartAreas[0].AxisY.Interval = double.NaN;
+                        //this.chart1.ChartAreas[0].AxisX.Interval = double.NaN;
 
                         break;
                     }
