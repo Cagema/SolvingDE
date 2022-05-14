@@ -285,28 +285,28 @@ namespace SolvingDE
             // ODU1MenuItem
             // 
             this.ODU1MenuItem.Name = "ODU1MenuItem";
-            this.ODU1MenuItem.Size = new System.Drawing.Size(93, 20);
+            this.ODU1MenuItem.Size = new System.Drawing.Size(87, 20);
             this.ODU1MenuItem.Text = "Ван дер Поля";
             this.ODU1MenuItem.Click += new System.EventHandler(this.ODU1MenuItem_Click);
             // 
             // ODU2MenuItem
             // 
             this.ODU2MenuItem.Name = "ODU2MenuItem";
-            this.ODU2MenuItem.Size = new System.Drawing.Size(146, 20);
+            this.ODU2MenuItem.Size = new System.Drawing.Size(134, 20);
             this.ODU2MenuItem.Text = "Гамильтонова система";
             this.ODU2MenuItem.Click += new System.EventHandler(this.ODU2MenuItem_Click);
             // 
             // ODU3MenuItem
             // 
             this.ODU3MenuItem.Name = "ODU3MenuItem";
-            this.ODU3MenuItem.Size = new System.Drawing.Size(158, 20);
+            this.ODU3MenuItem.Size = new System.Drawing.Size(142, 20);
             this.ODU3MenuItem.Text = "Маятник с возмущением";
             this.ODU3MenuItem.Click += new System.EventHandler(this.ODU3MenuItem_Click);
             // 
             // ODU4MenuItem
             // 
             this.ODU4MenuItem.Name = "ODU4MenuItem";
-            this.ODU4MenuItem.Size = new System.Drawing.Size(117, 20);
+            this.ODU4MenuItem.Size = new System.Drawing.Size(108, 20);
             this.ODU4MenuItem.Text = "Двойной маятник";
             this.ODU4MenuItem.Click += new System.EventHandler(this.ODU4MenuItem_Click);
             // 
@@ -318,7 +318,8 @@ namespace SolvingDE
             "Рунге-Кутты явный 4 ",
             "Рунге-Кутты явный 6",
             "Рунге-Кутты явный 8",
-            "Рунге-Кутты неявный 2 (трапеция, неявная средняя точка)",
+            "Рунге-Кутты неявный 2 (трапеция)",
+            "Рунге-Кутты неявный 2 (неявная средняя точка)",
             "Рунге-Кутты неявный 4 порядка",
             "Экстраполяционный метод на основе явной средней точки (Грегга-Булирша-Штера)",
             "Экстраполяционный метод на основе неявной средней точки",
@@ -415,7 +416,7 @@ namespace SolvingDE
             this.ArrayHTextBox.Name = "ArrayHTextBox";
             this.ArrayHTextBox.Size = new System.Drawing.Size(198, 29);
             this.ArrayHTextBox.TabIndex = 32;
-            this.ArrayHTextBox.Text = "0,01 0,02 0,04 0,06 0,08 0,1 0,12 0,14 0,16 0,18 0,2";
+            this.ArrayHTextBox.Text = "0,02 0,04 0,06 0,08 0,1 0,12 0,14 0,16 0,18 0,2";
             this.ArrayHTextBox.Visible = false;
             // 
             // Form1

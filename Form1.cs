@@ -7,7 +7,7 @@ namespace SolvingDE
 {
     public partial class Form1 : Form
     {
-        delegate double[] Van_der_Pol_Method(double[] y, double m, double h);
+        delegate double[][] Van_der_Pol_Method(double[] y, double m, double h, int sizeArrays);
         Van_der_Pol_Method newPointVanderPol = Methods.VdP.RK2;
         //    delegate double[] Van_der_Pol_Method(double[] y, double m, double h);
         //    Van_der_Pol_Method newPointVanderPol = EulerMethods.Van_der_Pol;
@@ -30,7 +30,8 @@ namespace SolvingDE
                 { 0, Methods.VdP.RK2 },
                 { 1, Methods.VdP.RK4 },
                 { 2, Methods.VdP.RK6 },
-                { 3, Methods.VdP.RK8 }
+                { 3, Methods.VdP.RK8 },
+                { 4, Methods.VdP.ImplicitRK2Trapezoid },
             };
         }
 
@@ -80,21 +81,7 @@ namespace SolvingDE
                         {
                             int sizeArrays = Convert.ToInt32(time / hArray[stepSizeIndex]);
                             double hDec = hArray[stepSizeIndex] / dec;
-                            analytical[stepSizeIndex] = new double[sizeArrays][];
-                            double[] analyticalY = new double[2];
-                            Array.Copy(y, analyticalY, 2);
-
-                            for (int i = 0; i < sizeArrays; i++)
-                            {
-                                for (int indexDec = 0; indexDec < dec; indexDec++)
-                                {
-                                    analyticalY = Methods.VdP.RK4(analyticalY, m, hDec);
-                                }
-
-                                analytical[stepSizeIndex][i] = new double[2];
-                                analytical[stepSizeIndex][i][0] = analyticalY[0];
-                                analytical[stepSizeIndex][i][1] = analyticalY[1];
-                            }
+                            analytical[stepSizeIndex] = Methods.VdP.RK4WithDec(new double[2] {y[0], y[1]}, m, hDec, sizeArrays, dec);
 
                             solution[stepSizeIndex] = new double[methodsChecked][][];
                             timeSpent[stepSizeIndex] = new double[methodsChecked];
@@ -104,23 +91,10 @@ namespace SolvingDE
                             {
                                 if (methodsVdP.TryGetValue(MethodsListBox.CheckedIndices[methodIndex], out newPointVanderPol))
                                 {
-                                    solution[stepSizeIndex][methodIndex] = new double[sizeArrays][];
-                                    double[] localY = new double[2];
-                                    Array.Copy(y, localY, 2);
-                                    solution[stepSizeIndex][methodIndex][0] = new double[2];
-                                    solution[stepSizeIndex][methodIndex][0][0] = localY[0];
-                                    solution[stepSizeIndex][methodIndex][0][1] = localY[1];
-
                                     Stopwatch stopWatch = new Stopwatch();
                                     stopWatch.Start();
 
-                                    for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
-                                    {
-                                        localY = newPointVanderPol(localY, m, hArray[stepSizeIndex]);
-                                        solution[stepSizeIndex][methodIndex][stepIndex] = new double[2];
-                                        solution[stepSizeIndex][methodIndex][stepIndex][0] = localY[0];
-                                        solution[stepSizeIndex][methodIndex][stepIndex][1] = localY[1];
-                                    }
+                                    solution[stepSizeIndex][methodIndex] = newPointVanderPol(new double[2] { y[0], y[1] }, m, hArray[stepSizeIndex], sizeArrays);
 
                                     stopWatch.Stop();
                                     TimeSpan ts = stopWatch.Elapsed;
@@ -176,7 +150,7 @@ namespace SolvingDE
                             this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = true;
                             this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = true;
 
-                            for (int step = 0; step < time / hArray[0]; step++)
+                            for (int step = 0; step < (int)(time / hArray[0]); step++)
                             {
                                 this.chart1.Series[i].Points.AddXY(solution[0][i][step][0], solution[0][i][step][1]);
 
