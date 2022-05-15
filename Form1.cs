@@ -31,7 +31,8 @@ namespace SolvingDE
                 { 1, Methods.VdP.RK4 },
                 { 2, Methods.VdP.RK6 },
                 { 3, Methods.VdP.RK8 },
-                { 4, Methods.VdP.ImplicitRK2Trapezoid },
+                { 4, Methods.VdP.ImplicitRK2Trapezoid }, // WRONG
+                { 7, Methods.VdP.ExtrapolatorMidpoint }
             };
         }
 

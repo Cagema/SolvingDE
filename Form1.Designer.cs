@@ -33,6 +33,7 @@ namespace SolvingDE
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.mTextBox = new System.Windows.Forms.TextBox();
             this.mLabel = new System.Windows.Forms.Label();
@@ -90,6 +91,7 @@ namespace SolvingDE
             // 
             // mTextBox
             // 
+            this.mTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.mTextBox.Location = new System.Drawing.Point(675, 141);
             this.mTextBox.Name = "mTextBox";
             this.mTextBox.Size = new System.Drawing.Size(100, 29);
@@ -98,6 +100,7 @@ namespace SolvingDE
             // 
             // mLabel
             // 
+            this.mLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.mLabel.AutoSize = true;
             this.mLabel.Location = new System.Drawing.Point(781, 144);
             this.mLabel.Name = "mLabel";
@@ -107,6 +110,7 @@ namespace SolvingDE
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.Location = new System.Drawing.Point(12, 555);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(147, 44);
@@ -117,6 +121,7 @@ namespace SolvingDE
             // 
             // hTextBox
             // 
+            this.hTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.hTextBox.Location = new System.Drawing.Point(676, 31);
             this.hTextBox.Name = "hTextBox";
             this.hTextBox.Size = new System.Drawing.Size(100, 29);
@@ -125,6 +130,7 @@ namespace SolvingDE
             // 
             // timeTextBox
             // 
+            this.timeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.timeTextBox.Location = new System.Drawing.Point(676, 67);
             this.timeTextBox.Name = "timeTextBox";
             this.timeTextBox.Size = new System.Drawing.Size(100, 29);
@@ -133,6 +139,7 @@ namespace SolvingDE
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(782, 34);
             this.label2.Name = "label2";
@@ -142,6 +149,7 @@ namespace SolvingDE
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(781, 70);
             this.label3.Name = "label3";
@@ -151,6 +159,7 @@ namespace SolvingDE
             // 
             // aLabel
             // 
+            this.aLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.aLabel.AutoSize = true;
             this.aLabel.Location = new System.Drawing.Point(782, 144);
             this.aLabel.Name = "aLabel";
@@ -161,6 +170,7 @@ namespace SolvingDE
             // 
             // aTextBox
             // 
+            this.aTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.aTextBox.Location = new System.Drawing.Point(675, 141);
             this.aTextBox.Name = "aTextBox";
             this.aTextBox.Size = new System.Drawing.Size(100, 29);
@@ -170,6 +180,7 @@ namespace SolvingDE
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(781, 106);
             this.label5.Name = "label5";
@@ -179,6 +190,7 @@ namespace SolvingDE
             // 
             // xTextBox
             // 
+            this.xTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.xTextBox.Location = new System.Drawing.Point(676, 103);
             this.xTextBox.Name = "xTextBox";
             this.xTextBox.Size = new System.Drawing.Size(40, 29);
@@ -187,6 +199,7 @@ namespace SolvingDE
             // 
             // yTextBox
             // 
+            this.yTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.yTextBox.Location = new System.Drawing.Point(735, 103);
             this.yTextBox.Name = "yTextBox";
             this.yTextBox.Size = new System.Drawing.Size(40, 29);
@@ -195,6 +208,7 @@ namespace SolvingDE
             // 
             // lTextBox
             // 
+            this.lTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lTextBox.Location = new System.Drawing.Point(675, 141);
             this.lTextBox.Name = "lTextBox";
             this.lTextBox.Size = new System.Drawing.Size(100, 29);
@@ -204,6 +218,7 @@ namespace SolvingDE
             // 
             // massTextBox
             // 
+            this.massTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.massTextBox.Location = new System.Drawing.Point(675, 176);
             this.massTextBox.Name = "massTextBox";
             this.massTextBox.Size = new System.Drawing.Size(100, 29);
@@ -213,6 +228,7 @@ namespace SolvingDE
             // 
             // lengthLabel
             // 
+            this.lengthLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lengthLabel.AutoSize = true;
             this.lengthLabel.Location = new System.Drawing.Point(781, 144);
             this.lengthLabel.Name = "lengthLabel";
@@ -223,6 +239,7 @@ namespace SolvingDE
             // 
             // massLabel
             // 
+            this.massLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.massLabel.AutoSize = true;
             this.massLabel.Location = new System.Drawing.Point(781, 179);
             this.massLabel.Name = "massLabel";
@@ -233,6 +250,7 @@ namespace SolvingDE
             // 
             // angle1TextBox
             // 
+            this.angle1TextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.angle1TextBox.Location = new System.Drawing.Point(675, 211);
             this.angle1TextBox.Name = "angle1TextBox";
             this.angle1TextBox.Size = new System.Drawing.Size(100, 29);
@@ -242,6 +260,7 @@ namespace SolvingDE
             // 
             // angle2TextBox
             // 
+            this.angle2TextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.angle2TextBox.Location = new System.Drawing.Point(675, 246);
             this.angle2TextBox.Name = "angle2TextBox";
             this.angle2TextBox.Size = new System.Drawing.Size(100, 29);
@@ -251,6 +270,7 @@ namespace SolvingDE
             // 
             // angle1Label
             // 
+            this.angle1Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.angle1Label.AutoSize = true;
             this.angle1Label.Location = new System.Drawing.Point(781, 214);
             this.angle1Label.Name = "angle1Label";
@@ -261,6 +281,7 @@ namespace SolvingDE
             // 
             // angle2Label
             // 
+            this.angle2Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.angle2Label.AutoSize = true;
             this.angle2Label.Location = new System.Drawing.Point(781, 249);
             this.angle2Label.Name = "angle2Label";
@@ -271,6 +292,8 @@ namespace SolvingDE
             // 
             // menuStrip1
             // 
+            this.menuStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ODU1MenuItem,
             this.ODU2MenuItem,
@@ -278,7 +301,7 @@ namespace SolvingDE
             this.ODU4MenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1046, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(479, 24);
             this.menuStrip1.TabIndex = 23;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -312,12 +335,13 @@ namespace SolvingDE
             // 
             // MethodsListBox
             // 
+            this.MethodsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.MethodsListBox.FormattingEnabled = true;
             this.MethodsListBox.Items.AddRange(new object[] {
             "Рунге-Кутты явный 2 ",
             "Рунге-Кутты явный 4 ",
-            "Рунге-Кутты явный 6",
-            "Рунге-Кутты явный 8",
+            "Рунге-Кутты явный 6 (метод Бучера)",
+            "Рунге-Кутты явный 8 (метод Фельберга)",
             "Рунге-Кутты неявный 2 (трапеция)",
             "Рунге-Кутты неявный 2 (неявная средняя точка)",
             "Рунге-Кутты неявный 4 порядка",
@@ -356,6 +380,7 @@ namespace SolvingDE
             // 
             // DecTextBox
             // 
+            this.DecTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DecTextBox.Location = new System.Drawing.Point(841, 31);
             this.DecTextBox.Name = "DecTextBox";
             this.DecTextBox.Size = new System.Drawing.Size(100, 29);
@@ -364,6 +389,7 @@ namespace SolvingDE
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(947, 34);
             this.label1.Name = "label1";
@@ -385,6 +411,9 @@ namespace SolvingDE
             // 
             // efficiencyChart
             // 
+            this.efficiencyChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             chartArea4.AxisX.LabelStyle.Format = "0.0";
             chartArea4.AxisX.Title = "Затраченное время";
             chartArea4.AxisY.IsLabelAutoFit = false;
@@ -392,6 +421,8 @@ namespace SolvingDE
             chartArea4.AxisY.Title = "Ошибка";
             chartArea4.Name = "ChartArea1";
             this.efficiencyChart.ChartAreas.Add(chartArea4);
+            legend1.Name = "Legend1";
+            this.efficiencyChart.Legends.Add(legend1);
             this.efficiencyChart.Location = new System.Drawing.Point(12, 27);
             this.efficiencyChart.Name = "efficiencyChart";
             this.efficiencyChart.Size = new System.Drawing.Size(658, 494);
@@ -401,6 +432,7 @@ namespace SolvingDE
             // 
             // checkBox1
             // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.Location = new System.Drawing.Point(676, 393);
             this.checkBox1.Name = "checkBox1";
@@ -412,6 +444,7 @@ namespace SolvingDE
             // 
             // ArrayHTextBox
             // 
+            this.ArrayHTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ArrayHTextBox.Location = new System.Drawing.Point(833, 391);
             this.ArrayHTextBox.Name = "ArrayHTextBox";
             this.ArrayHTextBox.Size = new System.Drawing.Size(198, 29);
