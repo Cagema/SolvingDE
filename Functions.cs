@@ -17,6 +17,15 @@ namespace SolvingDE
             return result;
         }
 
+        public static double[,] JacVdP(double m, double[] y)
+        {
+            return new double[,]
+            {
+                {0, 1 },
+                {-m * 2 * y[0] * y[1] - 1, m * (1 - y[0] * y[0]) }
+            };
+        }
+
         public static double[] DerivativeHamiltonian(double[] y)
         {
             double[] result = new double[2];

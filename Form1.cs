@@ -31,8 +31,13 @@ namespace SolvingDE
                 { 1, Methods.VdP.RK4 },
                 { 2, Methods.VdP.RK6 },
                 { 3, Methods.VdP.RK8 },
-                { 4, Methods.VdP.ImplicitRK2Trapezoid }, // WRONG
-                { 7, Methods.VdP.ExtrapolatorMidpoint }
+                { 4, Methods.VdP.Euler },
+                { 5, Methods.VdP.ImplicitEuler },
+                { 6, Methods.VdP.ImplicitRK2Trapezoid },
+                { 9, Methods.VdP.ExtrapolatorMidpoint },
+                { 16, Methods.VdP.AdamsBashforth2 },
+                { 17, Methods.VdP.AdamsBashforth4 },
+                { 18, Methods.VdP.AdamsBashforth6 },
             };
         }
 

@@ -40,6 +40,22 @@ namespace SolvingDE.Methods
             return result;
         }
 
+        private static double[] RK4OneStep(double[] y, double m, double h)
+        {
+            double[][] k = new double[4][];
+            double[] hRK4 = new double[] { 1d, h / 2, h / 2, h };
+
+            k[0] = Functions.DerivativeVanDerPol(m, y);
+            for (int i = 1; i < 4; i++)
+            {
+                k[i] = Functions.DerivativeVanDerPol(m, new double[2] { y[0] + hRK4[i] * k[i - 1][0],
+                                                                        y[1] + hRK4[i] * k[i - 1][1] });
+            }
+
+            return new double[2] { y[0] + (h / 6) * (k[0][0] + (2 * k[1][0]) + (2 * k[2][0]) + k[3][0]),
+                                   y[1] + (h / 6) * (k[0][1] + (2 * k[1][1]) + (2 * k[2][1]) + k[3][1])};
+        }
+
         public static double[][] RK4(double[] y, double m, double h, int sizeArrays)
         {
             double[][] result = new double[sizeArrays][];
@@ -47,18 +63,7 @@ namespace SolvingDE.Methods
 
             for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
             {
-                double[][] k = new double[4][];
-                double[] hRK4 = new double[] { 1d, h / 2, h / 2, h };
-
-                k[0] = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
-                for (int i = 1; i < 4; i++)
-                {
-                    k[i] = Functions.DerivativeVanDerPol(m, new double[2] {result[stepIndex - 1][0] + hRK4[i] * k[i - 1][0],
-                                                                           result[stepIndex - 1][1] + hRK4[i] * k[i - 1][1] });
-                }
-
-                result[stepIndex] = new double[2] { result[stepIndex - 1][0] + (h / 6) * (k[0][0] + (2 * k[1][0]) + (2 * k[2][0]) + k[3][0]),
-                                                    result[stepIndex - 1][1] + (h / 6) * (k[0][1] + (2 * k[1][1]) + (2 * k[2][1]) + k[3][1])};
+                result[stepIndex] = RK4OneStep(result[stepIndex - 1], m, h);
             }
 
             return result;
@@ -101,61 +106,66 @@ namespace SolvingDE.Methods
 
             for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
             {
-                double[][] k = new double[7][];
-                k[0] = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
-
-                var dynamicStepResult = new double[2]
-                {
-                    result[stepIndex - 1][0] + (h * k[0][0] / 2),
-                    result[stepIndex - 1][1] + (h * k[0][1] / 2)
-                };
-                k[1] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
-
-                dynamicStepResult = new double[2]
-
-                {
-                    result[stepIndex - 1][0] + h * (k[0][0] * (2 / 9d) + k[1][0] * (4 / 9d)),
-                    result[stepIndex - 1][1] + h * (k[0][1] * (2 / 9d) + k[1][1] * (4 / 9d))
-                };
-                k[2] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
-
-                dynamicStepResult = new double[2]
-
-                {
-                    result[stepIndex - 1][0] + h * ((7/36d) * k[0][0] + (2/9d) * k[1][0] + (-1/12d) * k[2][0]),
-                    result[stepIndex - 1][1] + h * ((7/36d) * k[0][1] + (2/9d) * k[1][1] + (-1/12d) * k[2][1])
-                };
-                k[3] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
-
-                dynamicStepResult = new double[2]
-                {
-                    result[stepIndex - 1][0] + h * ((-35/144d) * k[0][0] + (-55/36d) * k[1][0] + (35/48d) * k[2][0] + (15/8d) * k[3][0]),
-                    result[stepIndex - 1][1] + h * ((-35/144d) * k[0][1] + (-55/36d) * k[1][1] + (35/48d) * k[2][1] + (15/8d) * k[3][1])
-                };
-                k[4] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
-
-                dynamicStepResult = new double[2]
-                {
-                    result[stepIndex - 1][0] + h * ((-1/360d) * k[0][0] + (-11/36d) * k[1][0] + (-1/8d) * k[2][0] + (1/2d) * k[3][0] + (1/10d) * k[4][0]),
-                    result[stepIndex - 1][1] + h * ((-1/360d) * k[0][1] + (-11/36d) * k[1][1] + (-1/8d) * k[2][1] + (1/2d) * k[3][1] + (1/10d) * k[4][1])
-                };
-                k[5] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
-
-                dynamicStepResult = new double[2]
-                {
-                    result[stepIndex - 1][0] + h * ((-41/260d) * k[0][0] + (22/13d) * k[1][0] + (43/156d) * k[2][0] + (-118/39d) * k[3][0] + (32/195d) * k[4][0] + (80/39d) * k[5][0]),
-                    result[stepIndex - 1][1] + h * ((-41/260d) * k[0][1] + (22/13d) * k[1][1] + (43/156d) * k[2][1] + (-118/39d) * k[3][1] + (32/195d) * k[4][1] + (80/39d) * k[5][1])
-                };
-                k[6] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
-
-                result[stepIndex] = new double[2] 
-                {
-                    result[stepIndex - 1][0] + h * ((13/200d) * k[0][0] + (11/40d) * k[2][0] + (11/40d) * k[3][0] + (4/25d) * k[4][0] + (4/25d) * k[5][0] + (13/200d) * k[6][0]),
-                    result[stepIndex - 1][1] + h * ((13/200d) * k[0][1] + (11/40d) * k[2][1] + (11/40d) * k[3][1] + (4/25d) * k[4][1] + (4/25d) * k[5][1] + (13/200d) * k[6][1])
-                };
+                result[stepIndex] = RK6OneStep(result[stepIndex - 1], m, h);
             }
 
             return result;
+        }
+
+        private static double[] RK6OneStep(double[] y, double m, double h)
+        {
+            double[][] k = new double[7][];
+            k[0] = Functions.DerivativeVanDerPol(m, y);
+
+            var dynamicStepResult = new double[2]
+            {
+                    y[0] + (h * k[0][0] / 2),
+                    y[1] + (h * k[0][1] / 2)
+            };
+            k[1] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
+
+            dynamicStepResult = new double[2]
+
+            {
+                    y[0] + h * (k[0][0] * (2 / 9d) + k[1][0] * (4 / 9d)),
+                    y[1] + h * (k[0][1] * (2 / 9d) + k[1][1] * (4 / 9d))
+            };
+            k[2] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
+
+            dynamicStepResult = new double[2]
+
+            {
+                    y[0] + h * ((7/36d) * k[0][0] + (2/9d) * k[1][0] + (-1/12d) * k[2][0]),
+                    y[1] + h * ((7/36d) * k[0][1] + (2/9d) * k[1][1] + (-1/12d) * k[2][1])
+            };
+            k[3] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
+
+            dynamicStepResult = new double[2]
+            {
+                    y[0] + h * ((-35/144d) * k[0][0] + (-55/36d) * k[1][0] + (35/48d) * k[2][0] + (15/8d) * k[3][0]),
+                    y[1] + h * ((-35/144d) * k[0][1] + (-55/36d) * k[1][1] + (35/48d) * k[2][1] + (15/8d) * k[3][1])
+            };
+            k[4] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
+
+            dynamicStepResult = new double[2]
+            {
+                    y[0] + h * ((-1/360d) * k[0][0] + (-11/36d) * k[1][0] + (-1/8d) * k[2][0] + (1/2d) * k[3][0] + (1/10d) * k[4][0]),
+                    y[1] + h * ((-1/360d) * k[0][1] + (-11/36d) * k[1][1] + (-1/8d) * k[2][1] + (1/2d) * k[3][1] + (1/10d) * k[4][1])
+            };
+            k[5] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
+
+            dynamicStepResult = new double[2]
+            {
+                    y[0] + h * ((-41/260d) * k[0][0] + (22/13d) * k[1][0] + (43/156d) * k[2][0] + (-118/39d) * k[3][0] + (32/195d) * k[4][0] + (80/39d) * k[5][0]),
+                    y[1] + h * ((-41/260d) * k[0][1] + (22/13d) * k[1][1] + (43/156d) * k[2][1] + (-118/39d) * k[3][1] + (32/195d) * k[4][1] + (80/39d) * k[5][1])
+            };
+            k[6] = Functions.DerivativeVanDerPol(m, dynamicStepResult);
+
+            return new double[2]
+            {
+                    y[0] + h * ((13/200d) * k[0][0] + (11/40d) * k[2][0] + (11/40d) * k[3][0] + (4/25d) * k[4][0] + (4/25d) * k[5][0] + (13/200d) * k[6][0]),
+                    y[1] + h * ((13/200d) * k[0][1] + (11/40d) * k[2][1] + (11/40d) * k[3][1] + (4/25d) * k[4][1] + (4/25d) * k[5][1] + (13/200d) * k[6][1])
+            };
         }
 
         public static double[][] RK8(double[] y, double m, double h, int sizeArrays)
@@ -275,7 +285,51 @@ namespace SolvingDE.Methods
 
             for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
             {
+                var k1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
+                k1[0] *= h * 0.5d;
+                k1[1] *= h * 0.5d;
+                var resultThisStep = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
+                for (int i = 0; i < 3; i++)
+                {
+                    var k2 = Functions.DerivativeVanDerPol(m, resultThisStep);
+                    k2[0] *= h * 0.5d;
+                    k2[1] *= h * 0.5d;
 
+                    var residual = new double[2]
+                    {
+                        resultThisStep[0] - result[stepIndex - 1][0] - k1[0],
+                        resultThisStep[1] - result[stepIndex - 1][1] - k1[1]
+                    };
+
+                    residual[0] -= k2[0];
+                    residual[1] -= k2[1];
+
+                    var jac = Functions.JacVdP(m, resultThisStep);
+                    jac[0, 0] *= h;
+                    jac[0, 1] *= h;
+                    jac[1, 0] *= h;
+                    jac[1, 1] *= h;
+
+                    jac[0, 0] = 1 - jac[0, 0];
+                    jac[0, 0] = -jac[0, 0];
+                    jac[1, 1] = 1 - jac[1, 1];
+                    jac[1, 1] = -jac[1, 1];
+
+                    residual = new double[2]
+                    {
+                        jac[0,0] * residual[0] + jac[1,0] * residual[1],
+                        jac[0,1] * residual[0] + jac[1,1] * residual[1]
+                    };
+
+                    resultThisStep[0] -= residual[0];
+                    resultThisStep[1] -= residual[1];
+                }
+
+                result[stepIndex] = new double[2]
+                {
+                    resultThisStep[0],
+                    resultThisStep[1]
+                };
             }
 
             return result;
@@ -292,6 +346,86 @@ namespace SolvingDE.Methods
             }
 
             return result;
+        }
+
+        public static double[][] Euler(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+            {
+                var k1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
+                result[stepIndex] = new double[2]
+                {
+                    result[stepIndex - 1][0] + k1[0]*h,
+                    result[stepIndex - 1][1] + k1[1]*h
+                };
+            }
+
+            return result;
+        }
+
+        public static double[][] ImplicitEuler(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+            {
+                result[stepIndex] = HelpEulerNewton(m, h, result[stepIndex - 1]);
+            }
+
+            return result;
+        }
+
+        private static double[] HelpEulerNewton(double m, double h, double[] lastStep)
+        {
+            var resultThisStep = new double[2] { lastStep[0], lastStep[1] };
+            for (int i = 0; i < 3; i++)
+            {
+                var k1 = Functions.DerivativeVanDerPol(m, resultThisStep);
+                var euler = new double[2]
+                {
+                        k1[0] * h,
+                        k1[1] * h
+                };
+
+                var residual = new double[2]
+                {
+                        resultThisStep[0] - lastStep[0],
+                        resultThisStep[1] - lastStep[1]
+                };
+
+                residual[0] -= euler[0];
+                residual[1] -= euler[1];
+
+                var jac = Functions.JacVdP(m, resultThisStep);
+                jac[0, 0] *= h;
+                jac[0, 1] *= h;
+                jac[1, 0] *= h;
+                jac[1, 1] *= h;
+
+                jac[0, 0] = 1 - jac[0, 0];
+                jac[0, 0] = -jac[0, 0];
+                jac[1, 1] = 1 - jac[1, 1];
+                jac[1, 1] = -jac[1, 1];
+
+                residual = new double[2]
+                {
+                        jac[0,0] * residual[0] + jac[1,0] * residual[1],
+                        jac[0,1] * residual[0] + jac[1,1] * residual[1]
+                };
+
+                resultThisStep[0] -= residual[0];
+                resultThisStep[1] -= residual[1];
+            }
+
+            return new double[2]
+            {
+                    resultThisStep[0],
+                    resultThisStep[1]
+            };
         }
 
         public static double[][] ExtrapolatorMidpoint(double[] y, double m, double h, int sizeArrays)
@@ -319,6 +453,84 @@ namespace SolvingDE.Methods
                 {
                     (4 * levels[1][1][0] - levels[0][0][0]) / 3d,
                     (4 * levels[1][1][1] - levels[0][0][1]) / 3d
+                };
+            }
+
+            return result;
+        }
+
+        public static double[][] AdamsBashforth2(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            for (int i = 1; i <= 2; i++)
+            {
+                result[i] = MidpointMethod(result[i - 1], m, h);
+            }
+
+            for (int stepIndex = 3; stepIndex < sizeArrays; stepIndex++)
+            {
+                var y1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
+                var y2 = Functions.DerivativeVanDerPol(m, result[stepIndex - 2]);
+                result[stepIndex] = new double[2]
+                {
+                    result[stepIndex - 1][0] + h * 0.5d * (3 * y1[0] - y2[0]),
+                    result[stepIndex - 1][1] + h * 0.5d * (3 * y1[1] - y2[1])
+                };
+            }
+
+            return result;
+        }
+
+        public static double[][] AdamsBashforth4(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            for (int i = 1; i <= 4; i++)
+            {
+                result[i] = RK4OneStep(result[i - 1], m, h);
+            }
+
+            for (int stepIndex = 5; stepIndex < sizeArrays; stepIndex++)
+            {
+                var y1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
+                var y2 = Functions.DerivativeVanDerPol(m, result[stepIndex - 2]);
+                var y3 = Functions.DerivativeVanDerPol(m, result[stepIndex - 3]);
+                var y4 = Functions.DerivativeVanDerPol(m, result[stepIndex - 4]);
+                result[stepIndex] = new double[2]
+                {
+                    result[stepIndex - 1][0] + (h / 24d) * (55 * y1[0] - 59 * y2[0] + 37 * y3[0] - 9 * y4[0]),
+                    result[stepIndex - 1][1] + (h / 24d) * (55 * y1[1] - 59 * y2[1] + 37 * y3[1] - 9 * y4[1])
+                };
+            }
+
+            return result;
+        }
+
+        public static double[][] AdamsBashforth6(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            for (int i = 1; i <= 6; i++)
+            {
+                result[i] = RK6OneStep(result[i - 1], m, h);
+            }
+
+            for (int stepIndex = 7; stepIndex < sizeArrays; stepIndex++)
+            {
+                var y1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
+                var y2 = Functions.DerivativeVanDerPol(m, result[stepIndex - 2]);
+                var y3 = Functions.DerivativeVanDerPol(m, result[stepIndex - 3]);
+                var y4 = Functions.DerivativeVanDerPol(m, result[stepIndex - 4]);
+                var y5 = Functions.DerivativeVanDerPol(m, result[stepIndex - 5]);
+                var y6 = Functions.DerivativeVanDerPol(m, result[stepIndex - 6]);
+                result[stepIndex] = new double[2]
+                {
+                    result[stepIndex - 1][0] + (h / 1440d) * (4277 * y1[0] - 7923 * y2[0] + 9982 * y3[0] - 7298 * y4[0] + 2877 * y5[0] - 475 * y6[0]),
+                    result[stepIndex - 1][1] + (h / 1440d) * (4277 * y1[1] - 7923 * y2[1] + 9982 * y3[1] - 7298 * y4[1] + 2877 * y5[1] - 475 * y6[1])
                 };
             }
 
