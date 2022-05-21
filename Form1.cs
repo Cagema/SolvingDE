@@ -34,6 +34,7 @@ namespace SolvingDE
                 { 4, Methods.VdP.Euler },
                 { 5, Methods.VdP.ImplicitEuler },
                 { 6, Methods.VdP.ImplicitRK2Trapezoid },
+                { 7, Methods.VdP.ImplicitRK2Midpoint },
                 { 9, Methods.VdP.ExtrapolatorMidpoint },
                 { 16, Methods.VdP.AdamsBashforth2 },
                 { 17, Methods.VdP.AdamsBashforth4 },
@@ -139,10 +140,10 @@ namespace SolvingDE
 
                             this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
                             this.globalChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-                            this.globalChart.Series[j].BorderWidth = 3;
+                            this.globalChart.Series[j].BorderWidth = 1;
                             this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
                             this.globalChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-                            this.globalChart.Series[j + 1].BorderWidth = 3;
+                            this.globalChart.Series[j + 1].BorderWidth = 1;
 
 
                             this.efficiencyChart.Series.Add(MethodsListBox.CheckedItems[i].ToString());

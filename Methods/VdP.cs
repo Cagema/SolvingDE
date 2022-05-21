@@ -285,44 +285,42 @@ namespace SolvingDE.Methods
 
             for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
             {
-                var k1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
-                k1[0] *= h * 0.5d;
-                k1[1] *= h * 0.5d;
                 var resultThisStep = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
-                for (int i = 0; i < 3; i++)
+
+                for (int i = 0; i < 100; i++)
                 {
+                    var k1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
+
                     var k2 = Functions.DerivativeVanDerPol(m, resultThisStep);
-                    k2[0] *= h * 0.5d;
-                    k2[1] *= h * 0.5d;
+                    var hf = new double[2]
+                    {
+                        (k1[0] + k2[0]) * 0.5d * h,
+                        (k1[1] + k2[1]) * 0.5d * h
+                    };
 
                     var residual = new double[2]
                     {
-                        resultThisStep[0] - result[stepIndex - 1][0] - k1[0],
-                        resultThisStep[1] - result[stepIndex - 1][1] - k1[1]
+                        resultThisStep[0] - result[stepIndex - 1][0] - hf[0],
+                        resultThisStep[1] - result[stepIndex - 1][1] - hf[1]
                     };
 
-                    residual[0] -= k2[0];
-                    residual[1] -= k2[1];
-
-                    var jac = Functions.JacVdP(m, resultThisStep);
-                    jac[0, 0] *= h;
-                    jac[0, 1] *= h;
-                    jac[1, 0] *= h;
-                    jac[1, 1] *= h;
-
-                    jac[0, 0] = 1 - jac[0, 0];
-                    jac[0, 0] = -jac[0, 0];
-                    jac[1, 1] = 1 - jac[1, 1];
-                    jac[1, 1] = -jac[1, 1];
+                    double[,] jac = Jacob(m, h * 0.5d, resultThisStep);
 
                     residual = new double[2]
                     {
-                        jac[0,0] * residual[0] + jac[1,0] * residual[1],
-                        jac[0,1] * residual[0] + jac[1,1] * residual[1]
+                        jac[0,0] * residual[0] + jac[0,1] * residual[1],
+                        jac[1,0] * residual[0] + jac[1,1] * residual[1]
                     };
+
+                    var magnitudePow = residual[0] * residual[0] + residual[1] * residual[1];
 
                     resultThisStep[0] -= residual[0];
                     resultThisStep[1] -= residual[1];
+
+                    if (magnitudePow <= 0.00000001f)
+                    {
+                        break;
+                    }
                 }
 
                 result[stepIndex] = new double[2]
@@ -335,14 +333,61 @@ namespace SolvingDE.Methods
             return result;
         }
 
-        public static double[][] DI_RK2(double[] y, double m, double h, int sizeArrays)
+        public static double[][] ImplicitRK2Midpoint(double[] y, double m, double h, int sizeArrays)
         {
             double[][] result = new double[sizeArrays][];
             result[0] = new double[2] { y[0], y[1] };
 
             for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
             {
-                
+                var resultThisStep = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
+
+                for (int i = 0; i < 10; i++)
+                {
+                    var fx = Functions.DerivativeVanDerPol(m, resultThisStep);
+                    var midpoint = new double[2]
+                    {
+                        result[stepIndex - 1][0] + fx[0] * h * 0.5d,
+                        result[stepIndex - 1][1] + fx[1] * h * 0.5d
+                    };
+
+                    var f = Functions.DerivativeVanDerPol(m, midpoint);
+                    var hf = new double[2]
+                    {
+                        f[0] * h,
+                        f[1] * h
+                    };
+
+                    var residual = new double[2]
+                    {
+                        resultThisStep[0] - result[stepIndex - 1][0] - hf[0],
+                        resultThisStep[1] - result[stepIndex - 1][1] - hf[1]
+                    };
+
+                    double[,] jac = Jacob(m, h, resultThisStep);
+
+                    residual = new double[2]
+                    {
+                        jac[0,0] * residual[0] + jac[0,1] * residual[1],
+                        jac[1,0] * residual[0] + jac[1,1] * residual[1]
+                    };
+
+                    var magnitudePow = residual[0] * residual[0] + residual[1] * residual[1];
+
+                    resultThisStep[0] -= residual[0];
+                    resultThisStep[1] -= residual[1];
+
+                    if (magnitudePow <= 0.000001f)
+                    {
+                        break;
+                    }
+                }
+
+                result[stepIndex] = new double[2]
+                {
+                    resultThisStep[0],
+                    resultThisStep[1]
+                };
             }
 
             return result;
@@ -382,6 +427,7 @@ namespace SolvingDE.Methods
         private static double[] HelpEulerNewton(double m, double h, double[] lastStep)
         {
             var resultThisStep = new double[2] { lastStep[0], lastStep[1] };
+
             for (int i = 0; i < 3; i++)
             {
                 var k1 = Functions.DerivativeVanDerPol(m, resultThisStep);
@@ -393,32 +439,27 @@ namespace SolvingDE.Methods
 
                 var residual = new double[2]
                 {
-                        resultThisStep[0] - lastStep[0],
-                        resultThisStep[1] - lastStep[1]
+                        resultThisStep[0] - lastStep[0] - euler[0],
+                        resultThisStep[1] - lastStep[1] - euler[1]
                 };
 
-                residual[0] -= euler[0];
-                residual[1] -= euler[1];
-
-                var jac = Functions.JacVdP(m, resultThisStep);
-                jac[0, 0] *= h;
-                jac[0, 1] *= h;
-                jac[1, 0] *= h;
-                jac[1, 1] *= h;
-
-                jac[0, 0] = 1 - jac[0, 0];
-                jac[0, 0] = -jac[0, 0];
-                jac[1, 1] = 1 - jac[1, 1];
-                jac[1, 1] = -jac[1, 1];
+                double[,] jac = Jacob(m, h, resultThisStep);
 
                 residual = new double[2]
                 {
-                        jac[0,0] * residual[0] + jac[1,0] * residual[1],
-                        jac[0,1] * residual[0] + jac[1,1] * residual[1]
+                        jac[0,0] * residual[0] + jac[0,1] * residual[1],
+                        jac[1,0] * residual[0] + jac[1,1] * residual[1]
                 };
+
+                var magnitudePow = residual[0] * residual[0] + residual[1] * residual[1];
 
                 resultThisStep[0] -= residual[0];
                 resultThisStep[1] -= residual[1];
+
+                if (magnitudePow <= 0.000001f)
+                {
+                    break;
+                }
             }
 
             return new double[2]
@@ -426,6 +467,29 @@ namespace SolvingDE.Methods
                     resultThisStep[0],
                     resultThisStep[1]
             };
+        }
+
+        private static double[,] Jacob(double m, double h, double[] resultThisStep)
+        {
+            var jac = Functions.JacVdP(m, resultThisStep);
+            jac[0, 0] *= h;
+            jac[0, 1] *= h;
+            jac[1, 0] *= h;
+            jac[1, 1] *= h;
+
+            jac[0, 0] = 1 - jac[0, 0];
+            jac[0, 1] *= -1;
+            jac[1, 0] *= -1;
+            jac[1, 1] = 1 - jac[1, 1];
+
+            var det = jac[0, 0] * jac[1, 1] - jac[1, 0] * jac[0, 1];
+            det = 1 / det;
+            jac = new double[2, 2]
+            {
+                    { det * jac[1,1], det * -jac[0,1] },
+                    { det * -jac[1,0], det * jac[0,0] }
+            };
+            return jac;
         }
 
         public static double[][] ExtrapolatorMidpoint(double[] y, double m, double h, int sizeArrays)
