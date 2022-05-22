@@ -333,6 +333,58 @@ namespace SolvingDE.Methods
             return result;
         }
 
+        public static double[] ImplicitMidpointMethod(double[] y, double m, double h)
+        {
+            var resultThisStep = new double[2] { y[0], y[1] };
+
+            for (int i = 0; i < 10; i++)
+            {
+                var fx = Functions.DerivativeVanDerPol(m, resultThisStep);
+                var midpoint = new double[2]
+                {
+                        y[0] + fx[0] * h * 0.5d,
+                        y[1] + fx[1] * h * 0.5d
+                };
+
+                var f = Functions.DerivativeVanDerPol(m, midpoint);
+                var hf = new double[2]
+                {
+                        f[0] * h,
+                        f[1] * h
+                };
+
+                var residual = new double[2]
+                {
+                        resultThisStep[0] - y[0] - hf[0],
+                        resultThisStep[1] - y[1] - hf[1]
+                };
+
+                double[,] jac = Jacob(m, h, resultThisStep);
+
+                residual = new double[2]
+                {
+                        jac[0,0] * residual[0] + jac[0,1] * residual[1],
+                        jac[1,0] * residual[0] + jac[1,1] * residual[1]
+                };
+
+                var magnitudePow = residual[0] * residual[0] + residual[1] * residual[1];
+
+                resultThisStep[0] -= residual[0];
+                resultThisStep[1] -= residual[1];
+
+                if (magnitudePow <= 0.000001f)
+                {
+                    break;
+                }
+            }
+
+            return new double[2]
+            {
+                    resultThisStep[0],
+                    resultThisStep[1]
+            };
+        }
+
         public static double[][] ImplicitRK2Midpoint(double[] y, double m, double h, int sizeArrays)
         {
             double[][] result = new double[sizeArrays][];
@@ -340,22 +392,41 @@ namespace SolvingDE.Methods
 
             for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
             {
+                result[stepIndex] = ImplicitMidpointMethod(result[stepIndex - 1], m, h);
+            }
+
+            return result;
+        }
+
+        public static double[][] ImplicitRK4(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+            {
                 var resultThisStep = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
-
-                for (int i = 0; i < 10; i++)
+                var k1 = Functions.DerivativeVanDerPol(m, resultThisStep);
+                var k2 = Functions.DerivativeVanDerPol(m, resultThisStep);
+                
+                for (int i = 0; i < 100; i++)
                 {
-                    var fx = Functions.DerivativeVanDerPol(m, resultThisStep);
-                    var midpoint = new double[2]
+                    var x1 = new double[2]
                     {
-                        result[stepIndex - 1][0] + fx[0] * h * 0.5d,
-                        result[stepIndex - 1][1] + fx[1] * h * 0.5d
+                        result[stepIndex - 1][0] + h * (0.25d * k1[0] - 0.03867513459d * k2[0]),
+                        result[stepIndex - 1][1] + h * (0.25d * k1[1] - 0.03867513459d * k2[1])
                     };
-
-                    var f = Functions.DerivativeVanDerPol(m, midpoint);
+                    k1 = Functions.DerivativeVanDerPol(m, x1);
+                    var x2 = new double[2]
+                    {
+                        result[stepIndex - 1][0] + h * (0.53867513459d * k1[0] + 0.25d * k2[0]),
+                        result[stepIndex - 1][1] + h * (0.53867513459d * k1[1] + 0.25d * k2[1])
+                    };
+                    k2 = Functions.DerivativeVanDerPol(m, x2);
                     var hf = new double[2]
                     {
-                        f[0] * h,
-                        f[1] * h
+                        (k1[0] + k2[0]) * 0.5d * h,
+                        (k1[1] + k2[1]) * 0.5d * h
                     };
 
                     var residual = new double[2]
@@ -364,7 +435,7 @@ namespace SolvingDE.Methods
                         resultThisStep[1] - result[stepIndex - 1][1] - hf[1]
                     };
 
-                    double[,] jac = Jacob(m, h, resultThisStep);
+                    double[,] jac = Jacob(m, h * 0.5d, resultThisStep);
 
                     residual = new double[2]
                     {
@@ -377,7 +448,7 @@ namespace SolvingDE.Methods
                     resultThisStep[0] -= residual[0];
                     resultThisStep[1] -= residual[1];
 
-                    if (magnitudePow <= 0.000001f)
+                    if (magnitudePow <= 0.00000001f)
                     {
                         break;
                     }
@@ -393,7 +464,7 @@ namespace SolvingDE.Methods
             return result;
         }
 
-        public static double[][] Euler(double[] y, double m, double h, int sizeArrays)
+            public static double[][] Euler(double[] y, double m, double h, int sizeArrays)
         {
             double[][] result = new double[sizeArrays][];
             result[0] = new double[2] { y[0], y[1] };
@@ -523,6 +594,94 @@ namespace SolvingDE.Methods
             return result;
         }
 
+        public static double[][] CompositionIMidpoint4(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            double k = 1.25992104989d;
+            double[] step = new double[] { h / (2 - k), -h * k / (2 - k), h / (2 - k) };
+            
+            for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+            {
+                var X = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
+                for (int i = 0; i < step.Length; i++)
+                {
+                    X = ImplicitMidpointMethod(X, m, step[i]);
+                }
+
+                result[stepIndex] = new double[2] { X[0], X[1] };
+            }
+
+            return result;
+        }
+
+        public static double[][] CompositionIMidpoint6(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            double[] step = new double[] { 0.78451361047755726382 * h, 0.23557321335935813368 * h, -1.1776799841788710069 * h, 1.3151863206839112189 * h, -1.1776799841788710069 * h, 0.23557321335935813368 * h, 0.78451361047755726382 * h };
+
+            for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+            {
+                var X = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
+                for (int i = 0; i < step.Length; i++)
+                {
+                    X = ImplicitMidpointMethod(X, m, step[i]);
+                }
+
+                result[stepIndex] = new double[2] { X[0], X[1] };
+            }
+
+            return result;
+        }
+
+        public static double[][] CompositionIMidpoint8(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            double[] step = new double[] { 0.74167036435061295345 * h, -0.40910082580003159400 * h, 0.19075471029623837995 * h, -0.57386247111608226666 * h, 0.29906418130365592384 * h, 0.33462491824529818378 * h, 0.31529309239676659663 * h, -0.79688793935291635402 * h, 0.31529309239676659663 * h, 0.33462491824529818378 * h, 0.29906418130365592384 * h, -0.57386247111608226666 * h, 0.19075471029623837995 * h, -0.40910082580003159400 * h, 0.74167036435061295345 * h };
+
+            for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+            {
+                var X = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
+                for (int i = 0; i < step.Length; i++)
+                {
+                    X = ImplicitMidpointMethod(X, m, step[i]);
+                }
+
+                result[stepIndex] = new double[2] { X[0], X[1] };
+            }
+
+            return result;
+        }
+
+        public static double[][] Composition4(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            double k = 1.58740105197;
+            double[] step = new double[] { h / (4 - k), h / (4 - k), h / (4 - k), -h * (k / (4 - k)), h / (4 - k), h / (4 - k) };
+            
+            for (int stepIndex = 1; stepIndex < sizeArrays; stepIndex++)
+            {
+                var X = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
+                for (int i = 0; i < step.Length; i++)
+                {
+                    X[1] = X[1] + step[i] * (m * (1 - X[0] * X[0]) * X[1] - X[0]);
+                    X[0] = X[0] + 2 * step[i] * X[1];
+                    X[1] = (X[1] + step[i] * (-X[0])) / (1 - step[i] * m * (1 - X[0] * X[0]));
+                }
+
+                result[stepIndex] = new double[2] { X[0], X[1] };
+            }
+
+            return result;
+        }
+
         public static double[][] AdamsBashforth2(double[] y, double m, double h, int sizeArrays)
         {
             double[][] result = new double[sizeArrays][];
@@ -583,6 +742,35 @@ namespace SolvingDE.Methods
                 result[i] = RK6OneStep(result[i - 1], m, h);
             }
 
+            for (int stepIndex = 7; stepIndex < sizeArrays; stepIndex++)
+            {
+                var y1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);
+                var y2 = Functions.DerivativeVanDerPol(m, result[stepIndex - 2]);
+                var y3 = Functions.DerivativeVanDerPol(m, result[stepIndex - 3]);
+                var y4 = Functions.DerivativeVanDerPol(m, result[stepIndex - 4]);
+                var y5 = Functions.DerivativeVanDerPol(m, result[stepIndex - 5]);
+                var y6 = Functions.DerivativeVanDerPol(m, result[stepIndex - 6]);
+                result[stepIndex] = new double[2]
+                {
+                    result[stepIndex - 1][0] + (h / 1440d) * (4277 * y1[0] - 7923 * y2[0] + 9982 * y3[0] - 7298 * y4[0] + 2877 * y5[0] - 475 * y6[0]),
+                    result[stepIndex - 1][1] + (h / 1440d) * (4277 * y1[1] - 7923 * y2[1] + 9982 * y3[1] - 7298 * y4[1] + 2877 * y5[1] - 475 * y6[1])
+                };
+            }
+
+            return result;
+        }
+
+        public static double[][] Toming2(double[] y, double m, double h, int sizeArrays)
+        {
+            double[][] result = new double[sizeArrays][];
+            result[0] = new double[2] { y[0], y[1] };
+
+            for (int i = 1; i <= 2; i++)
+            {
+                result[i] = RK6OneStep(result[i - 1], m, h);
+            }
+            double k1 = 1.142857142857d;
+            double k2 = 0.142857d;
             for (int stepIndex = 7; stepIndex < sizeArrays; stepIndex++)
             {
                 var y1 = Functions.DerivativeVanDerPol(m, result[stepIndex - 1]);

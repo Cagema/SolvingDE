@@ -35,10 +35,15 @@ namespace SolvingDE
                 { 5, Methods.VdP.ImplicitEuler },
                 { 6, Methods.VdP.ImplicitRK2Trapezoid },
                 { 7, Methods.VdP.ImplicitRK2Midpoint },
+                { 8, Methods.VdP.ImplicitRK4 },
                 { 9, Methods.VdP.ExtrapolatorMidpoint },
-                { 16, Methods.VdP.AdamsBashforth2 },
-                { 17, Methods.VdP.AdamsBashforth4 },
-                { 18, Methods.VdP.AdamsBashforth6 },
+                { 12, Methods.VdP.CompositionIMidpoint4 },
+                { 13, Methods.VdP.CompositionIMidpoint6 },
+                { 14, Methods.VdP.CompositionIMidpoint8 },
+                { 15, Methods.VdP.Composition4 },
+                { 18, Methods.VdP.AdamsBashforth2 },
+                { 19, Methods.VdP.AdamsBashforth4 },
+                { 20, Methods.VdP.AdamsBashforth6 },
             };
         }
 
