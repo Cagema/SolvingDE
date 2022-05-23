@@ -9,8 +9,8 @@ namespace SolvingDE
     {
         delegate double[][] Van_der_Pol_Method(double[] y, double m, double h, int sizeArrays);
         Van_der_Pol_Method newPointVanderPol = Methods.VdP.RK2;
-        //    delegate double[] Van_der_Pol_Method(double[] y, double m, double h);
-        //    Van_der_Pol_Method newPointVanderPol = EulerMethods.Van_der_Pol;
+        delegate double[][] Hamiltonian_Method(double[] y, double h, int sizeArrays);
+        Hamiltonian_Method newPointsHamiltonian = Methods.Hamiltonian.RK2;
         //    delegate double[] Hamiltonian_Method(double[] y, double h);
         //    Hamiltonian_Method newPointHamiltonian = EulerMethods.Hamiltonian;
         //    delegate double[] Pendulum_Method(double[] y, double derivative, double h);
@@ -20,6 +20,7 @@ namespace SolvingDE
 
         public int selectedODU = 0;
         Dictionary<int, Van_der_Pol_Method> methodsVdP;
+        Dictionary<int, Hamiltonian_Method> methodsHamiltonian;
 
         public Form1()
         {
@@ -37,13 +38,39 @@ namespace SolvingDE
                 { 7, Methods.VdP.ImplicitRK2Midpoint },
                 { 8, Methods.VdP.ImplicitRK4 },
                 { 9, Methods.VdP.ExtrapolatorMidpoint },
+                { 10, Methods.VdP.ExtrapolatorIMidpoint },
                 { 12, Methods.VdP.CompositionIMidpoint4 },
                 { 13, Methods.VdP.CompositionIMidpoint6 },
                 { 14, Methods.VdP.CompositionIMidpoint8 },
-                { 15, Methods.VdP.Composition4 },
+                { 15, Methods.VdP.Composition4KD },
+                { 16, Methods.VdP.Composition6KD },
+                { 17, Methods.VdP.Composition8KD },
                 { 18, Methods.VdP.AdamsBashforth2 },
                 { 19, Methods.VdP.AdamsBashforth4 },
                 { 20, Methods.VdP.AdamsBashforth6 },
+            };
+            methodsHamiltonian = new Dictionary<int, Hamiltonian_Method>
+            {
+                { 0, Methods.Hamiltonian.RK2 },
+                { 1, Methods.Hamiltonian.RK4 },
+                { 2, Methods.Hamiltonian.RK6 },
+                { 3, Methods.Hamiltonian.RK8 },
+                { 4, Methods.Hamiltonian.Euler },
+                { 5, Methods.Hamiltonian.ImplicitEuler },
+                { 6, Methods.Hamiltonian.ImplicitRK2Trapezoid },
+                { 7, Methods.Hamiltonian.ImplicitRK2Midpoint },
+                { 8, Methods.Hamiltonian.ImplicitRK4 },
+                { 9, Methods.Hamiltonian.ExtrapolatorMidpoint },
+                { 10, Methods.Hamiltonian.ExtrapolatorIMidpoint },
+                { 12, Methods.Hamiltonian.CompositionIMidpoint4 },
+                { 13, Methods.Hamiltonian.CompositionIMidpoint6 },
+                { 14, Methods.Hamiltonian.CompositionIMidpoint8 },
+                { 15, Methods.Hamiltonian.Composition4KD },
+                { 16, Methods.Hamiltonian.Composition6KD },
+                { 17, Methods.Hamiltonian.Composition8KD },
+                { 18, Methods.Hamiltonian.AdamsBashforth2 },
+                { 19, Methods.Hamiltonian.AdamsBashforth4 },
+                { 20, Methods.Hamiltonian.AdamsBashforth6 },
             };
         }
 
@@ -182,13 +209,100 @@ namespace SolvingDE
 
                 case 1:
                     {
-                        // Hamiltonian system with inseparable Hamiltonian
-                        //for (double t = 0; t < time; t += h)
-                        //{
-                        //    y = newPointHamiltonian(y, h);
+                        double[][][] analytical = new double[hArray.Length][][];
+                        double[][][][] solution = new double[hArray.Length][][][];
+                        double[][] timeSpent = new double[hArray.Length][];
+                        double[][] maxErrors = new double[hArray.Length][];
 
-                        //    this.chart1.Series[0].Points.AddXY(y[0], y[1]);
-                        //}
+                        int methodsChecked = MethodsListBox.CheckedIndices.Count;
+
+                        for (int stepSizeIndex = 0; stepSizeIndex < hArray.Length; stepSizeIndex++)
+                        {
+                            int sizeArrays = Convert.ToInt32(time / hArray[stepSizeIndex]);
+                            double hDec = hArray[stepSizeIndex] / dec;
+                            analytical[stepSizeIndex] = Methods.Hamiltonian.RK4WithDec(new double[2] { y[0], y[1] }, hDec, sizeArrays, dec);
+
+                            solution[stepSizeIndex] = new double[methodsChecked][][];
+                            timeSpent[stepSizeIndex] = new double[methodsChecked];
+                            maxErrors[stepSizeIndex] = new double[methodsChecked];
+
+                            for (int methodIndex = 0; methodIndex < methodsChecked; methodIndex++)
+                            {
+                                if (methodsHamiltonian.TryGetValue(MethodsListBox.CheckedIndices[methodIndex], out newPointsHamiltonian))
+                                {
+                                    Stopwatch stopWatch = new Stopwatch();
+                                    stopWatch.Start();
+
+                                    solution[stepSizeIndex][methodIndex] = newPointsHamiltonian(new double[2] { y[0], y[1] }, hArray[stepSizeIndex], sizeArrays);
+
+                                    stopWatch.Stop();
+                                    TimeSpan ts = stopWatch.Elapsed;
+                                    timeSpent[stepSizeIndex][methodIndex] = ts.TotalMilliseconds;
+
+                                    //FindMaxError
+                                    double maxError = double.MinValue;
+                                    for (int stepIndex = 0; stepIndex < sizeArrays; stepIndex++)
+                                    {
+                                        if (Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][0] - analytical[stepSizeIndex][stepIndex][0]) > maxError) maxError = Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][0] - analytical[stepSizeIndex][stepIndex][0]);
+                                        if (Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][1] - analytical[stepSizeIndex][stepIndex][1]) > maxError) maxError = Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][1] - analytical[stepSizeIndex][stepIndex][1]);
+                                    }
+
+                                    maxErrors[stepSizeIndex][methodIndex] = maxError;
+                                }
+                                else
+                                {
+                                    continue;
+                                    // Skip a method that is not implemented
+                                }
+                            }
+                        }
+
+                        // Build plots
+                        for (int i = 0, j = 0; i < methodsChecked; i++, j += 2)
+                        {
+                            this.chart1.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                            this.chart1.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+                            this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
+                            this.timeChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.timeChart.Series[j].BorderWidth = 3;
+                            this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
+                            this.timeChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.timeChart.Series[j + 1].BorderWidth = 3;
+
+                            this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
+                            this.globalChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.globalChart.Series[j].BorderWidth = 1;
+                            this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
+                            this.globalChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.globalChart.Series[j + 1].BorderWidth = 1;
+
+
+                            this.efficiencyChart.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                            this.efficiencyChart.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+                            for (int stepSizeIndex = 0; stepSizeIndex < hArray.Length; stepSizeIndex++)
+                            {
+                                this.efficiencyChart.Series[i].Points.AddXY(timeSpent[stepSizeIndex][i], maxErrors[stepSizeIndex][i]);
+                            }
+
+                            this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = true;
+                            this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = true;
+
+                            for (int step = 0; step < (int)(time / hArray[0]); step++)
+                            {
+                                this.chart1.Series[i].Points.AddXY(solution[0][i][step][0], solution[0][i][step][1]);
+
+                                this.timeChart.Series[j].Points.AddXY(step, solution[0][i][step][0]);
+                                this.timeChart.Series[j + 1].Points.AddXY(step, solution[0][i][step][1]);
+
+                                double globalX = solution[0][i][step][0] - analytical[0][step][0];
+                                double globalY = solution[0][i][step][1] - analytical[0][step][1];
+
+                                this.globalChart.Series[j].Points.AddXY(step, globalX);
+                                this.globalChart.Series[j + 1].Points.AddXY(step, globalY);
+                            }
+                        }
 
                         break;
                     }

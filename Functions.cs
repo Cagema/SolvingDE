@@ -34,6 +34,15 @@ namespace SolvingDE
             return result;
         }
 
+        internal static double[,] JacHamiltonian(double[] y)
+        {
+            return new double[,]
+            {
+                { -2 * y[0] * y[1], -y[0]*y[0] - 1 },
+                { y[1]*y[1] + 1, 2 * y[0] * y[1] }
+            };
+        }
+
         public static double[] DerivativePendulum(double a, double[] y)
         {
             double[] result = new double[2];
@@ -60,5 +69,7 @@ namespace SolvingDE
             result[1] = ((length[0] * p[1] * (mass[0] + mass[1])) - (length[1] * mass[1] * p[0] * Math.Cos(ConvertToRad(angle[0] - angle[1])))) / length[1] * length[1] * length[0] * mass[1] * (mass[0] + mass[1] * sqrSin);
             return result;
         }
+
+        
     }
 }

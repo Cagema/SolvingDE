@@ -96,7 +96,7 @@ namespace SolvingDE
             this.mTextBox.Name = "mTextBox";
             this.mTextBox.Size = new System.Drawing.Size(100, 29);
             this.mTextBox.TabIndex = 2;
-            this.mTextBox.Text = "0";
+            this.mTextBox.Text = "0,01";
             // 
             // mLabel
             // 
@@ -161,7 +161,7 @@ namespace SolvingDE
             // 
             this.aLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.aLabel.AutoSize = true;
-            this.aLabel.Location = new System.Drawing.Point(782, 144);
+            this.aLabel.Location = new System.Drawing.Point(782, 142);
             this.aLabel.Name = "aLabel";
             this.aLabel.Size = new System.Drawing.Size(151, 24);
             this.aLabel.TabIndex = 9;
@@ -230,7 +230,7 @@ namespace SolvingDE
             // 
             this.lengthLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lengthLabel.AutoSize = true;
-            this.lengthLabel.Location = new System.Drawing.Point(781, 144);
+            this.lengthLabel.Location = new System.Drawing.Point(782, 144);
             this.lengthLabel.Name = "lengthLabel";
             this.lengthLabel.Size = new System.Drawing.Size(160, 24);
             this.lengthLabel.TabIndex = 17;
