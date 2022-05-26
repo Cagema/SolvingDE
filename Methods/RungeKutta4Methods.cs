@@ -15,13 +15,13 @@ namespace SolvingDE
             double[][] k = new double[4][];
             double[] hRK4 = new double[] { 1, h / 2, h / 2, h };
 
-            k[0] = Functions.DerivativeVanDerPol(m, y);
+            k[0] = Functions.DerivativePendulum(m, y);
             for (int i = 1; i < 4; i++)
             {
                 k[i] = new double[2];
                 additionalY[0] = y[0] + hRK4[i] * k[i - 1][0];
                 additionalY[1] = y[1] + hRK4[i] * k[i - 1][1];
-                k[i] = Functions.DerivativeVanDerPol(m, additionalY);
+                k[i] = Functions.DerivativePendulum(m, additionalY);
             }
 
             y[0] += (h / 6) * (k[0][0] + (2 * k[1][0]) + (2 * k[2][0]) + k[3][0]);

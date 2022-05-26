@@ -29,11 +29,11 @@ namespace SolvingDE
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.mTextBox = new System.Windows.Forms.TextBox();
             this.mLabel = new System.Windows.Forms.Label();
@@ -77,12 +77,12 @@ namespace SolvingDE
             // 
             // chart1
             // 
-            chartArea1.AxisX.IsLabelAutoFit = false;
-            chartArea1.AxisX.LabelStyle.Format = "0.0";
-            chartArea1.AxisY.IsLabelAutoFit = false;
-            chartArea1.AxisY.LabelStyle.Format = "0.0";
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
+            chartArea9.AxisX.IsLabelAutoFit = false;
+            chartArea9.AxisX.LabelStyle.Format = "0.0";
+            chartArea9.AxisY.IsLabelAutoFit = false;
+            chartArea9.AxisY.LabelStyle.Format = "0.0";
+            chartArea9.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea9);
             this.chart1.Location = new System.Drawing.Point(12, 27);
             this.chart1.Name = "chart1";
             this.chart1.Size = new System.Drawing.Size(244, 244);
@@ -299,9 +299,9 @@ namespace SolvingDE
             this.ODU2MenuItem,
             this.ODU3MenuItem,
             this.ODU4MenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Location = new System.Drawing.Point(96, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(479, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(383, 24);
             this.menuStrip1.TabIndex = 23;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -329,8 +329,7 @@ namespace SolvingDE
             // ODU4MenuItem
             // 
             this.ODU4MenuItem.Name = "ODU4MenuItem";
-            this.ODU4MenuItem.Size = new System.Drawing.Size(108, 20);
-            this.ODU4MenuItem.Text = "Двойной маятник";
+            this.ODU4MenuItem.Size = new System.Drawing.Size(12, 20);
             this.ODU4MenuItem.Click += new System.EventHandler(this.ODU4MenuItem_Click);
             // 
             // MethodsListBox
@@ -372,10 +371,10 @@ namespace SolvingDE
             // 
             // timeChart
             // 
-            chartArea2.AxisX.IsLabelAutoFit = false;
-            chartArea2.AxisY.IsLabelAutoFit = false;
-            chartArea2.Name = "ChartArea1";
-            this.timeChart.ChartAreas.Add(chartArea2);
+            chartArea10.AxisX.IsLabelAutoFit = false;
+            chartArea10.AxisY.IsLabelAutoFit = false;
+            chartArea10.Name = "ChartArea1";
+            this.timeChart.ChartAreas.Add(chartArea10);
             this.timeChart.Location = new System.Drawing.Point(262, 27);
             this.timeChart.Name = "timeChart";
             this.timeChart.Size = new System.Drawing.Size(407, 244);
@@ -403,10 +402,10 @@ namespace SolvingDE
             // 
             // globalChart
             // 
-            chartArea3.AxisX.IsLabelAutoFit = false;
-            chartArea3.AxisY.IsLabelAutoFit = false;
-            chartArea3.Name = "ChartArea1";
-            this.globalChart.ChartAreas.Add(chartArea3);
+            chartArea11.AxisX.IsLabelAutoFit = false;
+            chartArea11.AxisY.IsLabelAutoFit = false;
+            chartArea11.Name = "ChartArea1";
+            this.globalChart.ChartAreas.Add(chartArea11);
             this.globalChart.Location = new System.Drawing.Point(12, 277);
             this.globalChart.Name = "globalChart";
             this.globalChart.Size = new System.Drawing.Size(407, 244);
@@ -418,15 +417,15 @@ namespace SolvingDE
             this.efficiencyChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea4.AxisX.LabelStyle.Format = "0.0";
-            chartArea4.AxisX.Title = "Затраченное время";
-            chartArea4.AxisY.IsLabelAutoFit = false;
-            chartArea4.AxisY.LabelStyle.Format = "0.0";
-            chartArea4.AxisY.Title = "Ошибка";
-            chartArea4.Name = "ChartArea1";
-            this.efficiencyChart.ChartAreas.Add(chartArea4);
-            legend1.Name = "Legend1";
-            this.efficiencyChart.Legends.Add(legend1);
+            chartArea12.AxisX.LabelStyle.Format = "0.0";
+            chartArea12.AxisX.Title = "Затраченное время";
+            chartArea12.AxisY.IsLabelAutoFit = false;
+            chartArea12.AxisY.LabelStyle.Format = "0.0";
+            chartArea12.AxisY.Title = "Ошибка";
+            chartArea12.Name = "ChartArea1";
+            this.efficiencyChart.ChartAreas.Add(chartArea12);
+            legend3.Name = "Legend1";
+            this.efficiencyChart.Legends.Add(legend3);
             this.efficiencyChart.Location = new System.Drawing.Point(12, 27);
             this.efficiencyChart.Name = "efficiencyChart";
             this.efficiencyChart.Size = new System.Drawing.Size(658, 494);

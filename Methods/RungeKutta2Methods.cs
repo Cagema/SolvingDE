@@ -10,11 +10,11 @@ namespace SolvingDE
     {
         public static double[] Van_der_Pol(double[] y, double m, double h)
         {
-            var k1 = Functions.DerivativeVanDerPol(m, y);
+            var k1 = Functions.DerivativePendulum(m, y);
 
             var additionalY =  new double[] { y[0] + h * k1[0], y[1] + h * k1[1] };
 
-            var k2 = Functions.DerivativeVanDerPol(m, additionalY);
+            var k2 = Functions.DerivativePendulum(m, additionalY);
 
             y[0] += h * (k1[0] + k2[0]) / 2;
             y[1] += h * (k1[1] + k2[1]) / 2;

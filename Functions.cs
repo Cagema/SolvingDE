@@ -9,7 +9,7 @@ namespace SolvingDE
             return angle * Math.PI / 180;
         }
 
-        public static double[] DerivativeVanDerPol(double m, double[] y)
+        public static double[] DerivativeVdP(double m, double[] y)
         {
             double[] result = new double[2];
             result[0] = y[1];
@@ -50,6 +50,15 @@ namespace SolvingDE
             result[1] = -a * y[1] + Math.Sin(ConvertToRad(y[0]));
             return result;
         }
+        internal static double[,] JacPendulum(double a, double[] y)
+        {
+            return new double[,]
+            {
+                { 0, 1 },
+                { Math.Cos(ConvertToRad(y[0])), -a }
+            };
+        }
+
 
         public static double[] DerivativeDPP(double[] mass, double[] length, double[] angle, double[] c)
         {

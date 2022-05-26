@@ -12,7 +12,7 @@ namespace SolvingDE
         {
             CheckInputParameter(y);
 
-            var derivative = Functions.DerivativeVanDerPol(m, y);
+            var derivative = Functions.DerivativePendulum(m, y);
             y[0] += h * derivative[0];
             y[1] += h * derivative[1];
             return y;

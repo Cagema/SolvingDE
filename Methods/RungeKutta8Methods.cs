@@ -12,34 +12,34 @@ namespace SolvingDE
         {
             double[][] k = new double[10][];
 
-            k[0] = Functions.DerivativeVanDerPol(m, y);
+            k[0] = Functions.DerivativePendulum(m, y);
 
             var additionalY = new double[2] { y[0] + (h * 4 / 27) * k[0][0], y[1] + (h * 4 / 27) * k[0][1] };
-            k[1] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[1] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK2(additionalY, y, h, k);
-            k[2] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[2] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK3(additionalY, y, h, k);
-            k[3] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[3] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK4(additionalY, y, h, k);
-            k[4] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[4] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK5(additionalY, y, h, k); 
-            k[5] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[5] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK6(additionalY, y, h, k);
-            k[6] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[6] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK7(additionalY, y, h, k); 
-            k[7] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[7] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK8(additionalY, y, h, k); 
-            k[8] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[8] = Functions.DerivativePendulum(m, additionalY);
 
             AdditionalYForK9(additionalY, y, h, k); 
-            k[9] = Functions.DerivativeVanDerPol(m, additionalY);
+            k[9] = Functions.DerivativePendulum(m, additionalY);
 
             y[0] += h / 840 * (41 * k[0][0] + 27 * k[3][0] + 272 * k[4][0] + 27 * k[5][0] + 216 * k[6][0] + 216 * k[8][0] + 41 * k[9][0]);
             y[1] += h / 840 * (41 * k[0][1] + 27 * k[3][1] + 272 * k[4][1] + 27 * k[5][1] + 216 * k[6][1] + 216 * k[8][1] + 41 * k[9][1]);

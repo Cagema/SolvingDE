@@ -11,16 +11,16 @@ namespace SolvingDE
         Van_der_Pol_Method newPointVanderPol = Methods.VdP.RK2;
         delegate double[][] Hamiltonian_Method(double[] y, double h, int sizeArrays);
         Hamiltonian_Method newPointsHamiltonian = Methods.Hamiltonian.RK2;
-        //    delegate double[] Hamiltonian_Method(double[] y, double h);
-        //    Hamiltonian_Method newPointHamiltonian = EulerMethods.Hamiltonian;
-        //    delegate double[] Pendulum_Method(double[] y, double derivative, double h);
-        //    Pendulum_Method newPointPendulum = EulerMethods.Pendulum;
-        //    delegate double[][] DoublePendulum_Method(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h);
-        //    DoublePendulum_Method newValuesDoublePendulum = EulerMethods.DoublePendulum;
+        delegate double[][] Pendulum_Method(double[] y, double a, double h, int sizeArrays);
+        Pendulum_Method newPointsPendulum = Methods.Pendulum.RK2;
+
+        delegate double[][] DoublePendulum_Method(double[] length, double[] mass, double[] p, double[] angle, double[] c, double sqrSin, double h);
+        DoublePendulum_Method newValuesDoublePendulum = EulerMethods.DoublePendulum;
 
         public int selectedODU = 0;
         Dictionary<int, Van_der_Pol_Method> methodsVdP;
         Dictionary<int, Hamiltonian_Method> methodsHamiltonian;
+        Dictionary<int, Pendulum_Method> methodsPendulum;
 
         public Form1()
         {
@@ -48,6 +48,9 @@ namespace SolvingDE
                 { 18, Methods.VdP.AdamsBashforth2 },
                 { 19, Methods.VdP.AdamsBashforth4 },
                 { 20, Methods.VdP.AdamsBashforth6 },
+                { 21, Methods.VdP.AdamsMulton2 },
+                { 22, Methods.VdP.AdamsMulton4 },
+                { 23, Methods.VdP.AdamsMulton6 },
             };
             methodsHamiltonian = new Dictionary<int, Hamiltonian_Method>
             {
@@ -71,6 +74,30 @@ namespace SolvingDE
                 { 18, Methods.Hamiltonian.AdamsBashforth2 },
                 { 19, Methods.Hamiltonian.AdamsBashforth4 },
                 { 20, Methods.Hamiltonian.AdamsBashforth6 },
+                { 23, Methods.Hamiltonian.AdamsMulton6 },
+            };
+            methodsPendulum = new Dictionary<int, Pendulum_Method>
+            {
+                { 0, Methods.Pendulum.RK2 },
+                { 1, Methods.Pendulum.RK4 },
+                { 2, Methods.Pendulum.RK6 },
+                { 3, Methods.Pendulum.RK8 },
+                { 4, Methods.Pendulum.Euler },
+                { 5, Methods.Pendulum.ImplicitEuler },
+                { 6, Methods.Pendulum.ImplicitRK2Trapezoid },
+                { 7, Methods.Pendulum.ImplicitRK2Midpoint },
+                { 8, Methods.Pendulum.ImplicitRK4 },
+                { 9, Methods.Pendulum.ExtrapolatorMidpoint },
+                { 10, Methods.Pendulum.ExtrapolatorIMidpoint },
+                { 12, Methods.Pendulum.CompositionIMidpoint4 },
+                { 13, Methods.Pendulum.CompositionIMidpoint6 },
+                { 14, Methods.Pendulum.CompositionIMidpoint8 },
+                { 15, Methods.Pendulum.Composition4KD },
+                { 16, Methods.Pendulum.Composition6KD },
+                { 17, Methods.Pendulum.Composition8KD },
+                { 18, Methods.Pendulum.AdamsBashforth2 },
+                { 19, Methods.Pendulum.AdamsBashforth4 },
+                { 20, Methods.Pendulum.AdamsBashforth6 },
             };
         }
 
@@ -309,68 +336,166 @@ namespace SolvingDE
 
                 case 2:
                     {
-                        // Pendulum with indignation
-                        //for (double t = 0; t < time; t += h)
-                        //{
-                        //    y = newPointPendulum(y, a, h);
+                        double[][][] analytical = new double[hArray.Length][][];
+                        double[][][][] solution = new double[hArray.Length][][][];
+                        double[][] timeSpent = new double[hArray.Length][];
+                        double[][] maxErrors = new double[hArray.Length][];
 
-                        //    this.chart1.Series[0].Points.AddXY(y[0], y[1]);
-                        //}
+                        int methodsChecked = MethodsListBox.CheckedIndices.Count;
+
+                        for (int stepSizeIndex = 0; stepSizeIndex < hArray.Length; stepSizeIndex++)
+                        {
+                            int sizeArrays = Convert.ToInt32(time / hArray[stepSizeIndex]);
+                            double hDec = hArray[stepSizeIndex] / dec;
+                            analytical[stepSizeIndex] = Methods.Pendulum.RK4WithDec(new double[2] { y[0], y[1] }, a, hDec, sizeArrays, dec);
+
+                            solution[stepSizeIndex] = new double[methodsChecked][][];
+                            timeSpent[stepSizeIndex] = new double[methodsChecked];
+                            maxErrors[stepSizeIndex] = new double[methodsChecked];
+
+                            for (int methodIndex = 0; methodIndex < methodsChecked; methodIndex++)
+                            {
+                                if (methodsPendulum.TryGetValue(MethodsListBox.CheckedIndices[methodIndex], out newPointsPendulum))
+                                {
+                                    Stopwatch stopWatch = new Stopwatch();
+                                    stopWatch.Start();
+
+                                    solution[stepSizeIndex][methodIndex] = newPointsPendulum(new double[2] { y[0], y[1] }, a, hArray[stepSizeIndex], sizeArrays);
+
+                                    stopWatch.Stop();
+                                    TimeSpan ts = stopWatch.Elapsed;
+                                    timeSpent[stepSizeIndex][methodIndex] = ts.TotalMilliseconds;
+
+                                    //FindMaxError
+                                    double maxError = double.MinValue;
+                                    for (int stepIndex = 0; stepIndex < sizeArrays; stepIndex++)
+                                    {
+                                        if (Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][0] - analytical[stepSizeIndex][stepIndex][0]) > maxError) maxError = Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][0] - analytical[stepSizeIndex][stepIndex][0]);
+                                        if (Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][1] - analytical[stepSizeIndex][stepIndex][1]) > maxError) maxError = Math.Abs(solution[stepSizeIndex][methodIndex][stepIndex][1] - analytical[stepSizeIndex][stepIndex][1]);
+                                    }
+
+                                    maxErrors[stepSizeIndex][methodIndex] = maxError;
+                                }
+                                else
+                                {
+                                    continue;
+                                    // Skip a method that is not implemented
+                                }
+                            }
+                        }
+
+                        // Build plots
+                        for (int i = 0, j = 0; i < methodsChecked; i++, j += 2)
+                        {
+                            this.chart1.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                            this.chart1.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+                            this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
+                            this.timeChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.timeChart.Series[j].BorderWidth = 3;
+                            this.timeChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
+                            this.timeChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.timeChart.Series[j + 1].BorderWidth = 3;
+
+                            this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " X");
+                            this.globalChart.Series[j].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.globalChart.Series[j].BorderWidth = 1;
+                            this.globalChart.Series.Add(MethodsListBox.CheckedItems[i].ToString() + " Y");
+                            this.globalChart.Series[j + 1].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                            this.globalChart.Series[j + 1].BorderWidth = 1;
+
+
+                            this.efficiencyChart.Series.Add(MethodsListBox.CheckedItems[i].ToString());
+                            this.efficiencyChart.Series[i].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+
+                            for (int stepSizeIndex = 0; stepSizeIndex < hArray.Length; stepSizeIndex++)
+                            {
+                                this.efficiencyChart.Series[i].Points.AddXY(timeSpent[stepSizeIndex][i], maxErrors[stepSizeIndex][i]);
+                            }
+
+                            this.efficiencyChart.ChartAreas[0].AxisX.IsLogarithmic = true;
+                            this.efficiencyChart.ChartAreas[0].AxisY.IsLogarithmic = true;
+
+                            for (int step = 0; step < (int)(time / hArray[0]); step++)
+                            {
+                                this.chart1.Series[i].Points.AddXY(solution[0][i][step][0], solution[0][i][step][1]);
+
+                                this.timeChart.Series[j].Points.AddXY(step, solution[0][i][step][0]);
+                                this.timeChart.Series[j + 1].Points.AddXY(step, solution[0][i][step][1]);
+
+                                double globalX = solution[0][i][step][0] - analytical[0][step][0];
+                                double globalY = solution[0][i][step][1] - analytical[0][step][1];
+
+                                this.globalChart.Series[j].Points.AddXY(step, globalX);
+                                this.globalChart.Series[j + 1].Points.AddXY(step, globalY);
+                            }
+                        }
 
                         break;
                     }
 
                 case 3:
                     {
-                        // double pendulum
-                        //double mass1 = Convert.ToDouble(this.massTextBox.Text);
-                        //mass1 = CheckInputMassAndL(mass1);
-                        //double[] mass = new double[] {mass1, mass1};
+                        //double pendulum
+                        double mass1 = Convert.ToDouble(this.massTextBox.Text);
+                        mass1 = CheckInputMassAndL(mass1);
+                        double[] mass = new double[] { mass1, mass1 };
 
-                        //double l1 = Convert.ToDouble(this.lTextBox.Text);
-                        //l1 = CheckInputMassAndL(l1);
-                        //double[] length = new double[] {l1, l1};
+                        double l1 = Convert.ToDouble(this.lTextBox.Text);
+                        l1 = CheckInputMassAndL(l1);
+                        double[] length = new double[] { l1, l1 };
 
-                        //double[] angle = new double[] { Convert.ToDouble(this.angle1TextBox.Text), Convert.ToDouble(this.angle2TextBox.Text) };
+                        double[] angle = new double[] { Convert.ToDouble(this.angle1TextBox.Text), Convert.ToDouble(this.angle2TextBox.Text) };
 
-                        //double[] c = new double[2];
-                        //double[] p = new double[2];
+                        double[] c = new double[2];
+                        double[] p = new double[2];
 
-                        //this.chart1.Series[0].Points.AddXY(0, 0);
-                        //this.chart1.Series[0].Points.AddXY(0, 0);
-                        //this.chart1.Series[0].Points.AddXY(0, 0);
-                        //this.chart1.ChartAreas[0].AxisX.Maximum = 30;
-                        //this.chart1.ChartAreas[0].AxisX.Minimum = -30;
-                        //this.chart1.ChartAreas[0].AxisY.Maximum = 30;
-                        //this.chart1.ChartAreas[0].AxisY.Minimum = -30;
-                        //this.chart1.ChartAreas[0].AxisY.Interval = 5;
-                        //this.chart1.ChartAreas[0].AxisX.Interval = 5;
+                        this.chart1.Series.Add(MethodsListBox.CheckedItems[0].ToString());
+                        this.chart1.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                        this.chart1.Series[0].Points.AddXY(0, 0);
+                        this.chart1.Series[0].Points.AddXY(0, 0);
+                        this.chart1.Series[0].Points.AddXY(0, 0);
+                        this.chart1.ChartAreas[0].AxisX.Maximum = 30;
+                        this.chart1.ChartAreas[0].AxisX.Minimum = -30;
+                        this.chart1.ChartAreas[0].AxisY.Maximum = 30;
+                        this.chart1.ChartAreas[0].AxisY.Minimum = -30;
+                        this.chart1.ChartAreas[0].AxisY.Interval = 5;
+                        this.chart1.ChartAreas[0].AxisX.Interval = 5;
 
-                        //for (double t = 0; t < time; t += h)
-                        //{
-                        //    double sqrSin = Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1]));
-                        //    c[0] = p[0] * p[1] * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) / (length[0] * length[1] * (mass[0] + mass[1] * sqrSin));
-                        //    c[1] = ((length[1] * length[1] * mass[1] * p[0] * p[0]) + (length[0] * length[0] * (mass[0] + mass[1]) * p[1] * p[1]) - (length[0] * length[1] * mass[0] * p[0] * p[1] * Math.Cos(Functions.ConvertToRad(angle[0] - angle[1])))) / (2 * length[0] * length[0] * length[1] * length[1] * (mass[0] + mass[1] * sqrSin));
+                        int sizeArrays = Convert.ToInt32(time / hArray[0]);
 
-                        //    double[][] newValues = newValuesDoublePendulum(length, mass, p, angle, c, sqrSin, h);
-                        //    p = newValues[0];
-                        //    angle = newValues[1];
+                        for (int i = 0; i < sizeArrays; i++)
+                        {
+                            double sqrSin = Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1]));
+                            c[0] = p[0] * p[1] * Math.Sin(Functions.ConvertToRad(angle[0] - angle[1])) / (length[0] * length[1] * (mass[0] + mass[1] * sqrSin));
+                            c[1] = ((length[1] * length[1] * mass[1] * p[0] * p[0]) + (length[0] * length[0] * (mass[0] + mass[1]) * p[1] * p[1]) - (length[0] * length[1] * mass[0] * p[0] * p[1] * Math.Cos(Functions.ConvertToRad(angle[0] - angle[1])))) / (2 * length[0] * length[0] * length[1] * length[1] * (mass[0] + mass[1] * sqrSin));
 
-                        //    y[0] = length[0] * Math.Cos(Functions.ConvertToRad(angle[0] + 90));
-                        //    y[1] = length[0] * -Math.Sin(Functions.ConvertToRad(angle[0] + 90));
-                        //    this.chart1.Series[0].Points[1] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
-                        //    y[0] += length[1] * Math.Cos(Functions.ConvertToRad(angle[1] + 90));
-                        //    y[1] += length[1] * -Math.Sin(Functions.ConvertToRad(angle[1] + 90));
-                        //    this.chart1.Series[0].Points[2] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
-                        //    this.chart1.Update();
-                        //}
+                            double[][] newValues = newValuesDoublePendulum(length, mass, p, angle, c, sqrSin, hArray[0]);
+                            p = newValues[0];
+                            angle = newValues[1];
 
-                        //this.chart1.ChartAreas[0].AxisX.Maximum = double.NaN;
-                        //this.chart1.ChartAreas[0].AxisX.Minimum = double.NaN;
-                        //this.chart1.ChartAreas[0].AxisY.Maximum = double.NaN;
-                        //this.chart1.ChartAreas[0].AxisY.Minimum = double.NaN;
-                        //this.chart1.ChartAreas[0].AxisY.Interval = double.NaN;
-                        //this.chart1.ChartAreas[0].AxisX.Interval = double.NaN;
+                            y[0] = length[0] * Math.Cos(Functions.ConvertToRad(angle[0] + 90));
+                            y[1] = length[0] * -Math.Sin(Functions.ConvertToRad(angle[0] + 90));
+                            Console.WriteLine(i.ToString() + "первая точка: " + y[0].ToString() + " , " + y[1].ToString());
+                            this.chart1.Series[0].Points[1] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
+                            y[0] += length[1] * Math.Cos(Functions.ConvertToRad(angle[1] + 90));
+                            y[1] += length[1] * -Math.Sin(Functions.ConvertToRad(angle[1] + 90));
+                            this.chart1.Series[0].Points[2] = new System.Windows.Forms.DataVisualization.Charting.DataPoint(y[0], y[1]);
+
+                            Console.WriteLine("вторая точка: " + y[0].ToString() + " , " + y[1].ToString());
+
+                            if (i / 20 == 0)
+                            {
+                                this.chart1.Update();
+                            }
+                        }
+
+                        this.chart1.ChartAreas[0].AxisX.Maximum = double.NaN;
+                        this.chart1.ChartAreas[0].AxisX.Minimum = double.NaN;
+                        this.chart1.ChartAreas[0].AxisY.Maximum = double.NaN;
+                        this.chart1.ChartAreas[0].AxisY.Minimum = double.NaN;
+                        this.chart1.ChartAreas[0].AxisY.Interval = double.NaN;
+                        this.chart1.ChartAreas[0].AxisX.Interval = double.NaN;
 
                         break;
                     }

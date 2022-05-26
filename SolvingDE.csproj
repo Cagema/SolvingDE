@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="Functions.cs" />
     <Compile Include="Methods\Hamiltonian.cs" />
+    <Compile Include="Methods\Pendulum.cs" />
     <Compile Include="Methods\VdP.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

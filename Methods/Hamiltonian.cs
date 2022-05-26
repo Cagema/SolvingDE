@@ -643,7 +643,7 @@ namespace SolvingDE.Methods
                 for (int i = 0; i < step.Length; i++)
                 {
                     //X = RK2(X, step[i], 2)[1];
-                    X = ImplicitMidpointMethod(X, step[i]);
+                    X = RK6OneStep(X, step[i]);
                 }
 
                 result[stepIndex] = new double[2] { X[0], X[1] };
@@ -708,7 +708,7 @@ namespace SolvingDE.Methods
                 var X = new double[2] { result[stepIndex - 1][0], result[stepIndex - 1][1] };
                 for (int i = 0; i < step.Length; i++)
                 {
-                    X = ImplicitMidpointMethod(X, step[i]);
+                    X = CompositionIMidpoint6(X, step[i], 2)[1];
                 }
 
                 result[stepIndex] = new double[2] { X[0], X[1] };
@@ -816,17 +816,16 @@ namespace SolvingDE.Methods
             return result;
         }
 
-        public static double[][] Toming2(double[] y, double h, int sizeArrays)
+        public static double[][] AdamsMulton6(double[] y, double h, int sizeArrays)
         {
             double[][] result = new double[sizeArrays][];
             result[0] = new double[2] { y[0], y[1] };
 
-            for (int i = 1; i <= 2; i++)
+            for (int i = 1; i <= 6; i++)
             {
-                result[i] = RK6OneStep(result[i - 1], h);
+                result[i] = CompositionIMidpoint6(result[i - 1], h, 2)[1];
             }
-            double k1 = 1.142857142857d;
-            double k2 = 0.142857d;
+
             for (int stepIndex = 7; stepIndex < sizeArrays; stepIndex++)
             {
                 var y1 = Functions.DerivativeHamiltonian(result[stepIndex - 1]);
